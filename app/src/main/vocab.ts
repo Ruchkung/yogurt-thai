@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import type { Meeting } from './store'
+import { setThaiWords } from '../shared/thai'
 
 /**
  * The words a meeting's transcript is likely to get wrong: the names of the people in it and of their companies
@@ -36,7 +37,8 @@ export const setOwnerName = (f: () => string): void => { ownerName = f }
 export function noteOwnEmail(email: string | null | undefined): void { if (email?.includes('@')) ownEmails.add(email.toLowerCase()) }
 /** the person's jargon (Settings → Language), read each time so a change counts from the next line on */
 let jargonOf = (): string[] => []
-export const setJargon = (f: () => string[]): void => { jargonOf = f }
+// the same list keeps Thai words whole where they are split for search (shared/thai.ts)
+export const setJargon = (f: () => string[]): void => { jargonOf = f; setThaiWords(f) }
 /** for tests */
 export const forgetOwnEmails = (): void => ownEmails.clear()
 

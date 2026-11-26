@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { openStore, type Store } from '../src/main/store'
 import { Library } from '../src/main/library/store'
 import { chunkTranscript, CHUNK_WORDS } from '../src/main/library/chunks'
-import { splitThai, thaiWords, wordCount } from '../src/shared/thai'
+import { setThaiWords, splitThai, thaiWords, wordCount } from '../src/shared/thai'
 import { spokenOf, whisperLanguage } from '../src/shared/spoken'
 import { speechFits, wantedSpeechLocale } from '../src/main/asr/appleSpeech'
 import { tokens } from '../src/main/asr/echo'
@@ -21,6 +21,18 @@ describe('Thai words', () => {
     expect(thaiWords('ราคาสินค้า')).toEqual(['ราคา', 'สินค้า'])
     expect(splitThai(['ตกลงราคา', 'pricing', 'Q3'])).toEqual(['ตกลง', 'ราคา', 'pricing', 'Q3'])
     expect(splitThai(['ราคาQ3'])).toEqual(['ราคา', 'Q3'])
+  })
+  it('keeps compounds and loanwords whole where ICU cuts them in two', () => {
+    expect(thaiWords('งบประมาณการตลาด')).toEqual(['งบประมาณ', 'การตลาด'])
+    expect(thaiWords('แล้วรันเทสทั้งหมด')).toEqual(['แล้ว', 'รัน', 'เทส', 'ทั้งหมด'])
+    expect(thaiWords('ลูกค้าขอส่วนลดราคา')).toEqual(['ลูกค้า', 'ขอ', 'ส่วนลด', 'ราคา'])
+  })
+  it("keeps the person's own words whole too, from the next split on", () => {
+    expect(thaiWords('เปิดแอปยูโกิร์ตแล้ว')).not.toContain('ยูโกิร์ต')
+    setThaiWords(() => ['ยูโกิร์ต', 'Acme'])
+    try {
+      expect(thaiWords('เปิดแอปยูโกิร์ตแล้ว')).toEqual(['เปิด', 'แอป', 'ยูโกิร์ต', 'แล้ว'])
+    } finally { setThaiWords(() => []) }
   })
   it('counts Thai words one by one, not each spaced phrase as one', () => {
     expect(wordCount('hello there')).toBe(2)
@@ -64,6 +76,18 @@ describe('finding Thai in meetings', () => {
     expect(ids('ราคาสินค้า')).toEqual([a.id])
     expect(ids('ทีมขาย')).toEqual([a.id])
     expect(ids('ราคาพนักงาน')).toEqual([])
+  })
+  it('search looks for what was typed whole first, then word by word', () => {
+    const s = fresh()
+    const budget = meeting(s, 'A'), about = meeting(s, 'B')
+    s.addSegments([{ meetingId: budget.id, track: 'them', startMs: 0, endMs: 1000, text: 'งบประมาณปีหน้าต้องลดลง', speaker: null }])
+    // "งบ" (budget) and "ประมาณ" (about) apart, not the word งบประมาณ
+    s.addSegments([{ meetingId: about.id, track: 'them', startMs: 0, endMs: 1000, text: 'ใช้งบไปประมาณครึ่งหนึ่ง', speaker: null }])
+    const ids = (q: string) => s.search(q, 30, undefined, { now: new Date(2026, 10, 12), locale: 'th-TH' }).map((h) => h.meetingId)
+    expect(ids('งบประมาณ')).toEqual([budget.id])
+    // nothing has the phrase whole: its words are found apart
+    expect(ids('ประมาณครึ่ง')).toEqual([about.id])
+    expect(ids('งบครึ่งหนึ่ง')).toEqual([about.id])
   })
   it('a Thai question finds the lines it is about', () => {
     const s = fresh()

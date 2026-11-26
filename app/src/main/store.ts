@@ -702,9 +702,15 @@ export class Store {
     const parsedPeople = matchSearchPeople(q, this.searchPeople(), options.people, options)
     const people = uniqueSearchPeople([...(options.people ?? []), ...parsedPeople.matches.map(m => m.person)])
     const parsed = parseSearchQuery(parsedPeople.text, options)
-    const { date } = parsed
-    // Thai has no spaces between words: each of its words is a word to find
-    const words = splitThai(parsed.words)
+    // Thai has no spaces between words: what was typed is looked for whole first ("งบประมาณ", not "งบ" and the
+    // "ประมาณ" of "about"), and only when nothing has it, word by word
+    const whole = this.searchFor(parsed.words, parsed.date, people, limit, folder)
+    const split = splitThai(parsed.words)
+    if (whole.length || split.length === parsed.words.length) return whole
+    return this.searchFor(split, parsed.date, people, limit, folder)
+  }
+
+  private searchFor(words: string[], date: ReturnType<typeof parseSearchQuery>['date'], people: Person[], limit: number, folder?: string): SearchHit[] {
     if (!words.length && !date && !people.length) return []
     const inScope = (col: string) => notTrashed(col)
       + (folder == null ? '' : ` AND ${col} IN (SELECT meeting_id FROM folder_meetings WHERE folder_id = ?)`)
