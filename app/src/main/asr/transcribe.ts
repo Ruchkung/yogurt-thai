@@ -43,6 +43,8 @@ type Verbose = {
 type Opts = {
   /** where the server is; starts it if need be */
   url: () => Promise<string>
+  /** the path chunks are posted to: whisper-server's /inference unless it was started with another (--inference-path) */
+  path?: string
   /** a request failed: bring the server back (true) or give up (false). Asked on each failed call; the server decides how often it agrees. */
   recover?: (reason: 'gone' | 'timeout', used?: string) => Promise<boolean>
   signal?: AbortSignal
@@ -102,7 +104,7 @@ export function createTranscriber(o: Opts): Transcribe {
       if (prompt) form.set('prompt', prompt)
       used = await o.url()
       const ms = typeof o.timeoutMs === 'function' ? o.timeoutMs(c.samples.length) : o.timeoutMs ?? requestTimeoutMs(c.samples.length)
-      return fetchFn(`${used}/inference`, { method: 'POST', body: form, signal: o.signal ? AbortSignal.any([o.signal, AbortSignal.timeout(ms)]) : AbortSignal.timeout(ms) })
+      return fetchFn(`${used}${o.path ?? '/inference'}`, { method: 'POST', body: form, signal: o.signal ? AbortSignal.any([o.signal, AbortSignal.timeout(ms)]) : AbortSignal.timeout(ms) })
     }
     let res: Response | undefined
     let t0 = 0

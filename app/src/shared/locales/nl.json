@@ -804,5 +804,14 @@
   "Mic mute couldn’t be confirmed.": "Het dempen van de microfoon kon niet worden bevestigd.",
   "Mic off. Yogurt can’t hear call audio.": "Microfoon uit. Yogurt ontvangt geen gespreksaudio.",
   "Thai": "Thais",
-  "Best for meetings in Thai": "Het beste voor vergaderingen in het Thais"
+  "Best for meetings in Thai": "Het beste voor vergaderingen in het Thais",
+  "A whisper-server address, with its path if it isn’t /inference.": "Adres van een whisper-server, met het pad als dat niet /inference is.",
+  "An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.": "Een OpenAI-compatibele server zoals llama-server. Die schrijft samenvattingen en beantwoordt vragen.",
+  "Couldn't reach this server. Yogurt will keep trying it.": "Deze server is niet bereikbaar. Yogurt blijft het proberen.",
+  "Notes server": "Notitieserver",
+  "Speech server": "Spraakserver",
+  "Your own AI servers": "Je eigen AI-servers",
+  "Use AI servers you already run instead of Yogurt's own models. Yogurt sends meeting audio to the speech server, and transcripts and notes to the notes server. Leave a field blank to use Yogurt's.": "Gebruik AI-servers die je al draait in plaats van de eigen modellen van Yogurt. Yogurt stuurt vergaderaudio naar de spraakserver, en transcripties en notities naar de notitieserver. Laat een veld leeg om die van Yogurt te gebruiken.",
+  "This address is another computer. Meeting audio will be sent to it.": "Dit adres is een andere computer. Vergaderaudio wordt daarheen gestuurd.",
+  "This address is another computer. Transcripts and notes will be sent to it.": "Dit adres is een andere computer. Transcripties en notities worden daarheen gestuurd."
 }

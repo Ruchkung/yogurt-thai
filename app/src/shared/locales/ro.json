@@ -821,5 +821,14 @@
   "Mic mute couldn’t be confirmed.": "Oprirea microfonului nu a putut fi confirmată.",
   "Mic off. Yogurt can’t hear call audio.": "Microfon oprit. Yogurt nu poate auzi sunetul apelului.",
   "Thai": "Thailandeză",
-  "Best for meetings in Thai": "Cel mai bun pentru întâlniri în thailandeză"
+  "Best for meetings in Thai": "Cel mai bun pentru întâlniri în thailandeză",
+  "A whisper-server address, with its path if it isn’t /inference.": "Adresa unui whisper-server, cu calea dacă nu este /inference.",
+  "An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.": "Un server compatibil OpenAI, precum llama-server. Scrie rezumate și răspunde la întrebări.",
+  "Couldn't reach this server. Yogurt will keep trying it.": "Serverul nu poate fi accesat. Yogurt va încerca în continuare.",
+  "Notes server": "Server pentru note",
+  "Speech server": "Server de vorbire",
+  "Your own AI servers": "Serverele tale AI",
+  "Use AI servers you already run instead of Yogurt's own models. Yogurt sends meeting audio to the speech server, and transcripts and notes to the notes server. Leave a field blank to use Yogurt's.": "Folosiți servere AI pe care le rulați deja în locul modelelor Yogurt. Yogurt trimite sunetul ședinței la serverul de vorbire, iar transcrierile și notele la serverul pentru note. Lăsați un câmp gol pentru a folosi modelele Yogurt.",
+  "This address is another computer. Meeting audio will be sent to it.": "Această adresă este alt computer. Sunetul ședinței va fi trimis acolo.",
+  "This address is another computer. Transcripts and notes will be sent to it.": "Această adresă este alt computer. Transcrierile și notele vor fi trimise acolo."
 }

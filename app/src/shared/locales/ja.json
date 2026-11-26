@@ -762,5 +762,14 @@
   "Mic mute couldn’t be confirmed.": "マイクがミュートされたか確認できませんでした。",
   "Mic off. Yogurt can’t hear call audio.": "マイクはオフです。Yogurt に通話音声が届いていません。",
   "Thai": "タイ語",
-  "Best for meetings in Thai": "タイ語の会議に最適"
+  "Best for meetings in Thai": "タイ語の会議に最適",
+  "A whisper-server address, with its path if it isn’t /inference.": "whisper-server のアドレス。/inference 以外ならパスも含めます。",
+  "An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.": "llama-server などの OpenAI 互換サーバー。要約を書き、質問に答えます。",
+  "Couldn't reach this server. Yogurt will keep trying it.": "このサーバーに接続できません。Yogurt は再試行を続けます。",
+  "Notes server": "メモ用サーバー",
+  "Speech server": "音声サーバー",
+  "Your own AI servers": "自分の AI サーバー",
+  "Use AI servers you already run instead of Yogurt's own models. Yogurt sends meeting audio to the speech server, and transcripts and notes to the notes server. Leave a field blank to use Yogurt's.": "Yogurt のモデルの代わりに、すでに動かしている AI サーバーを使います。Yogurt は会議の音声を音声サーバーに、文字起こしとメモをメモ用サーバーに送ります。空欄にすると Yogurt のモデルを使います。",
+  "This address is another computer. Meeting audio will be sent to it.": "このアドレスは別のコンピュータです。会議の音声がそこに送られます。",
+  "This address is another computer. Transcripts and notes will be sent to it.": "このアドレスは別のコンピュータです。文字起こしとメモがそこに送られます。"
 }

@@ -804,5 +804,14 @@
   "Mic mute couldn’t be confirmed.": "Det gick inte att bekräfta att mikrofonen stängts av.",
   "Mic off. Yogurt can’t hear call audio.": "Mikrofonen är av. Yogurt kan inte höra samtalsljudet.",
   "Thai": "Thailändska",
-  "Best for meetings in Thai": "Bäst för möten på thailändska"
+  "Best for meetings in Thai": "Bäst för möten på thailändska",
+  "A whisper-server address, with its path if it isn’t /inference.": "Adress till en whisper-server, med sökväg om den inte är /inference.",
+  "An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.": "En OpenAI-kompatibel server som llama-server. Den skriver sammanfattningar och svarar på frågor.",
+  "Couldn't reach this server. Yogurt will keep trying it.": "Det gick inte att nå servern. Yogurt fortsätter att försöka.",
+  "Notes server": "Anteckningsserver",
+  "Speech server": "Talserver",
+  "Your own AI servers": "Dina egna AI-servrar",
+  "Use AI servers you already run instead of Yogurt's own models. Yogurt sends meeting audio to the speech server, and transcripts and notes to the notes server. Leave a field blank to use Yogurt's.": "Använd AI-servrar du redan kör i stället för Yogurts egna modeller. Yogurt skickar mötesljud till talservern och transkriptioner och anteckningar till anteckningsservern. Lämna ett fält tomt för att använda Yogurts.",
+  "This address is another computer. Meeting audio will be sent to it.": "Den här adressen är en annan dator. Mötesljudet skickas dit.",
+  "This address is another computer. Transcripts and notes will be sent to it.": "Den här adressen är en annan dator. Transkriptioner och anteckningar skickas dit."
 }

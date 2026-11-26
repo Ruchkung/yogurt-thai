@@ -762,5 +762,14 @@
   "Mic mute couldn’t be confirmed.": "Status bisu mikrofon tidak dapat dipastikan.",
   "Mic off. Yogurt can’t hear call audio.": "Mikrofon nonaktif. Yogurt tidak dapat mendengar audio panggilan.",
   "Thai": "Thai",
-  "Best for meetings in Thai": "Terbaik untuk rapat dalam bahasa Thai"
+  "Best for meetings in Thai": "Terbaik untuk rapat dalam bahasa Thai",
+  "A whisper-server address, with its path if it isn’t /inference.": "Alamat whisper-server, dengan path-nya jika bukan /inference.",
+  "An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.": "Server yang kompatibel dengan OpenAI seperti llama-server. Server ini menulis ringkasan dan menjawab pertanyaan.",
+  "Couldn't reach this server. Yogurt will keep trying it.": "Server ini tidak dapat dijangkau. Yogurt akan terus mencoba.",
+  "Notes server": "Server catatan",
+  "Speech server": "Server ucapan",
+  "Your own AI servers": "Server AI milik Anda",
+  "Use AI servers you already run instead of Yogurt's own models. Yogurt sends meeting audio to the speech server, and transcripts and notes to the notes server. Leave a field blank to use Yogurt's.": "Gunakan server AI yang sudah Anda jalankan, bukan model Yogurt sendiri. Yogurt mengirim audio rapat ke server ucapan, serta transkrip dan catatan ke server catatan. Kosongkan kolom untuk memakai model Yogurt.",
+  "This address is another computer. Meeting audio will be sent to it.": "Alamat ini adalah komputer lain. Audio rapat akan dikirim ke sana.",
+  "This address is another computer. Transcripts and notes will be sent to it.": "Alamat ini adalah komputer lain. Transkrip dan catatan akan dikirim ke sana."
 }

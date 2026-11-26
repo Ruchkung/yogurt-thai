@@ -804,5 +804,14 @@
   "Mic mute couldn’t be confirmed.": "Hindi makumpirmang naka-mute ang mikropono.",
   "Mic off. Yogurt can’t hear call audio.": "Naka-mute ang mikropono. Hindi marinig ng Yogurt ang audio ng tawag.",
   "Thai": "Thai",
-  "Best for meetings in Thai": "Pinakamainam para sa mga pulong sa Thai"
+  "Best for meetings in Thai": "Pinakamainam para sa mga pulong sa Thai",
+  "A whisper-server address, with its path if it isn’t /inference.": "Address ng whisper-server, kasama ang path kung hindi ito /inference.",
+  "An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.": "Isang server na compatible sa OpenAI tulad ng llama-server. Gumagawa ito ng buod at sumasagot sa mga tanong.",
+  "Couldn't reach this server. Yogurt will keep trying it.": "Hindi maabot ang server na ito. Patuloy itong susubukan ng Yogurt.",
+  "Notes server": "Server ng notes",
+  "Speech server": "Server ng speech",
+  "Your own AI servers": "Sarili mong mga AI server",
+  "Use AI servers you already run instead of Yogurt's own models. Yogurt sends meeting audio to the speech server, and transcripts and notes to the notes server. Leave a field blank to use Yogurt's.": "Gamitin ang mga AI server na pinapatakbo mo na sa halip na mga model ng Yogurt. Ipinapadala ng Yogurt ang audio ng meeting sa speech server, at ang mga transcript at notes sa notes server. Iwanang blangko para gamitin ang sa Yogurt.",
+  "This address is another computer. Meeting audio will be sent to it.": "Ibang computer ang address na ito. Ipapadala rito ang audio ng meeting.",
+  "This address is another computer. Transcripts and notes will be sent to it.": "Ibang computer ang address na ito. Ipapadala rito ang mga transcript at notes."
 }

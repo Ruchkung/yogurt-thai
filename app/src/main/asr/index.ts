@@ -15,6 +15,7 @@ import { basename } from 'node:path'
 import { createWhisperServer, recoverer, vadModelPath, whisperServerPath, type WhisperServer } from './server'
 import { clipStart, hearsClip } from './speedCheck'
 import { createTranscriber, type Line, type Transcribe } from './transcribe'
+import { asrEndpoint, onThisComputer } from '../../shared/localServers'
 import { meetingWords, respell, whisperPrompt } from '../vocab'
 import type { TranscriptPartial } from '../../shared/types'
 import type { Chunk } from './chunker'
@@ -183,6 +184,8 @@ export function hookTranscription(p: {
   store: Pick<Store, 'addSegments' | 'updateMeeting'> & Partial<Pick<Store, 'segments' | 'hideSegments' | 'meeting' | 'deleteSegments'>>
   /** the speech model, once setup has it */
   modelPath: () => string | undefined
+  /** a whisper-server the person already runs (Settings → Your own AI servers), used instead of Yogurt's own; read for each meeting */
+  asrServer?: () => string | undefined
   /** smaller speech models already on disk, best first: one takes over when the processor is too slow for the model (#156) */
   smallerModels?: () => string[]
   send: (seg: Omit<Segment, 'id'>) => void
@@ -252,7 +255,13 @@ export function hookTranscription(p: {
     if (p.transcriber) { const f = p.transcriber; transcribe = async (c, o) => f(c, (l, n, locked) => hear(l, n, locked), o) }
     // fake mode's stand-in is loaded only in fake mode, so it stays out of what real runs load
     else if (isFake()) transcribe = async (c, o) => (await import('./fake')).fakeTranscribe(c, o, promptOf(), whisperLanguage(spokenNow()))
-    else {
+    else if (p.asrServer?.()) {
+      // the person's own whisper-server: it is up or it isn't, so nothing here starts, restarts or times it
+      const { base, path } = asrEndpoint(p.asrServer()!)
+      console.info(`ASR using the whisper-server at ${base}${path}${onThisComputer(base) ? '' : ': another computer, so meeting audio leaves this one'}`)
+      transcribe = createTranscriber({ url: async () => base, path, onLanguage: (_t, lang, chars, locked) => hear(lang, chars, locked), prompt: promptOf,
+        language: () => options?.language ?? whisperLanguage(spokenNow()), signal: options?.signal })
+    } else {
       const model = p.modelPath()
       if (model) {
         const keepCpu = !!p.cpuOnly?.()
@@ -365,7 +374,7 @@ export function hookTranscription(p: {
 
   const offStart = (p.onStart ?? onMeetingStart)((m) => { open(m.id) })
   recorded = async (id, tracks, stopped, options) => {
-    if (sessions.has(id) || !p.modelPath()) return false
+    if (sessions.has(id) || (!p.modelPath() && !p.asrServer?.())) return false
     const s = open(id, true, options)
     if (!s.pipeline) { sessions.delete(id); return false }
     const pipe = s.pipeline

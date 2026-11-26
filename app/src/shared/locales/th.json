@@ -762,5 +762,14 @@
   "Mic mute couldn’t be confirmed.": "ยืนยันไม่ได้ว่าปิดไมค์แล้ว",
   "Mic off. Yogurt can’t hear call audio.": "ไมค์ปิดอยู่ Yogurt ไม่ได้ยินเสียงการโทร",
   "Thai": "ภาษาไทย",
-  "Best for meetings in Thai": "แม่นที่สุดสำหรับการประชุมภาษาไทย"
+  "Best for meetings in Thai": "แม่นที่สุดสำหรับการประชุมภาษาไทย",
+  "A whisper-server address, with its path if it isn’t /inference.": "ที่อยู่ของ whisper-server พร้อม path ถ้าไม่ใช่ /inference",
+  "An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.": "เซิร์ฟเวอร์ที่รองรับ OpenAI API เช่น llama-server ใช้เขียนสรุปและตอบคำถามใน ถาม",
+  "Couldn't reach this server. Yogurt will keep trying it.": "เชื่อมต่อเซิร์ฟเวอร์นี้ไม่ได้ Yogurt จะลองใหม่เรื่อย ๆ",
+  "Notes server": "เซิร์ฟเวอร์สรุปโน้ต",
+  "Speech server": "เซิร์ฟเวอร์ถอดเสียง",
+  "Your own AI servers": "AI server ของคุณเอง",
+  "Use AI servers you already run instead of Yogurt's own models. Yogurt sends meeting audio to the speech server, and transcripts and notes to the notes server. Leave a field blank to use Yogurt's.": "ใช้ AI server ที่คุณรันอยู่แล้วแทนโมเดลของ Yogurt โดย Yogurt จะส่งเสียงการประชุมไปที่เซิร์ฟเวอร์ถอดเสียง และส่งบทถอดเสียงกับโน้ตไปที่เซิร์ฟเวอร์สรุปโน้ต เว้นว่างไว้เพื่อใช้โมเดลของ Yogurt",
+  "This address is another computer. Meeting audio will be sent to it.": "ที่อยู่นี้เป็นเครื่องอื่น เสียงการประชุมจะถูกส่งไปที่เครื่องนั้น",
+  "This address is another computer. Transcripts and notes will be sent to it.": "ที่อยู่นี้เป็นเครื่องอื่น บทถอดเสียงและโน้ตจะถูกส่งไปที่เครื่องนั้น"
 }

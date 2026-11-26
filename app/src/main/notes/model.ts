@@ -27,7 +27,7 @@ const before = (pairs: string[] = []): EngineMessage[] => pairs.map((content, i)
  * one sequence for its whole life, let go when the queue says so. It remembers what the sequence starts with, so a
  * read ahead only sends what is new.
  */
-export function createNotesModel(o: { engine: Engine; modelPath: () => string | undefined; onLoaded?: (path: string) => void
+export function createNotesModel(o: { engine: Engine & { forModel?(modelPath: string): Pick<Engine, 'count' | 'chat' | 'preload'> }; modelPath: () => string | undefined; onLoaded?: (path: string) => void
   /** the context to load with (smaller on a Mac with little memory; notes split a long meeting into parts to fit) */
   contextSize?: number
   /** let go of what must not sit in memory next to the model (whisper-server on a Mac with little memory) */
@@ -69,9 +69,11 @@ export function createNotesModel(o: { engine: Engine; modelPath: () => string | 
     /** the model, loaded; a stopped job's signal stops what it is writing */
     async llm(signal?: AbortSignal): Promise<Llm> {
       const m = await load()
+      // the whole job goes to what was loaded for it (the person's notes server stays the same even if Settings change)
+      const engine = o.engine.forModel?.(m.path) ?? o.engine
       return {
         contextSize: m.contextSize,
-        count: (texts) => o.engine.count(texts),
+        count: (texts) => engine.count(texts),
         chat: (prompt, onToken, opts) => {
           const messages: EngineMessage[] = [...before(opts?.before), { role: 'user', content: prompt }]
           // only for a prompt long enough to be worth reading ahead: a meeting's notes or a question about one
@@ -79,7 +81,7 @@ export function createNotesModel(o: { engine: Engine; modelPath: () => string | 
           // not known while it runs; the worker skips what it already holds, so knowing less only costs a check
           held = ''
           let wrote = false
-          const ask = () => o.engine.chat({ messages, ...(opts?.maxTokens ? { maxTokens: opts.maxTokens } : {}), ...(opts?.temperature !== undefined ? { temperature: opts.temperature } : {}) }, (t) => { wrote = true; onToken(t) }, signal)
+          const ask = () => engine.chat({ messages, ...(opts?.maxTokens ? { maxTokens: opts.maxTokens } : {}), ...(opts?.temperature !== undefined ? { temperature: opts.temperature } : {}) }, (t) => { wrote = true; onToken(t) }, signal)
           // no word came on the graphics card: loaded again without it, and asked again (nothing was shown yet)
           let first = true
           return again(async () => { if (!first) await ensure(); first = false; return ask() }, () => !wrote && !signal?.aborted)
@@ -87,7 +89,7 @@ export function createNotesModel(o: { engine: Engine; modelPath: () => string | 
         },
         readAhead: async (text, stop) => {
           const s = stop ?? signal
-          held = await readInSteps(held, text, async (part) => { await o.engine.preload([{ role: 'user', content: part }], s) }, s)
+          held = await readInSteps(held, text, async (part) => { await engine.preload([{ role: 'user', content: part }], s) }, s)
         },
       }
     },

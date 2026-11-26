@@ -820,5 +820,14 @@
   "Mic mute couldn’t be confirmed.": "Não foi possível confirmar se o microfone foi silenciado.",
   "Mic off. Yogurt can’t hear call audio.": "Microfone silenciado. O Yogurt não consegue ouvir o áudio da chamada.",
   "Thai": "Tailandês",
-  "Best for meetings in Thai": "Melhor para reuniões em tailandês"
+  "Best for meetings in Thai": "Melhor para reuniões em tailandês",
+  "A whisper-server address, with its path if it isn’t /inference.": "Endereço de um whisper-server, com o caminho se não for /inference.",
+  "An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.": "Um servidor compatível com OpenAI, como o llama-server. Ele escreve resumos e responde perguntas.",
+  "Couldn't reach this server. Yogurt will keep trying it.": "Não foi possível acessar este servidor. O Yogurt vai continuar tentando.",
+  "Notes server": "Servidor de notas",
+  "Speech server": "Servidor de fala",
+  "Your own AI servers": "Seus próprios servidores de IA",
+  "Use AI servers you already run instead of Yogurt's own models. Yogurt sends meeting audio to the speech server, and transcripts and notes to the notes server. Leave a field blank to use Yogurt's.": "Use servidores de IA que você já executa em vez dos modelos do Yogurt. O Yogurt envia o áudio da reunião ao servidor de fala, e transcrições e notas ao servidor de notas. Deixe um campo em branco para usar os do Yogurt.",
+  "This address is another computer. Meeting audio will be sent to it.": "Este endereço é outro computador. O áudio da reunião será enviado para ele.",
+  "This address is another computer. Transcripts and notes will be sent to it.": "Este endereço é outro computador. Transcrições e notas serão enviadas para ele."
 }

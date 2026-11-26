@@ -835,5 +835,14 @@
   "Mic mute couldn’t be confirmed.": "Ztlumení mikrofonu se nepodařilo potvrdit.",
   "Mic off. Yogurt can’t hear call audio.": "Mikrofon je ztlumený. Yogurt neslyší zvuk hovoru.",
   "Thai": "Thajština",
-  "Best for meetings in Thai": "Nejlepší pro schůzky v thajštině"
+  "Best for meetings in Thai": "Nejlepší pro schůzky v thajštině",
+  "A whisper-server address, with its path if it isn’t /inference.": "Adresa whisper-serveru, s cestou, pokud není /inference.",
+  "An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.": "Server kompatibilní s OpenAI, například llama-server. Píše shrnutí a odpovídá na otázky.",
+  "Couldn't reach this server. Yogurt will keep trying it.": "Tento server není dostupný. Yogurt to bude zkoušet dál.",
+  "Notes server": "Server pro poznámky",
+  "Speech server": "Server pro řeč",
+  "Your own AI servers": "Vlastní AI servery",
+  "Use AI servers you already run instead of Yogurt's own models. Yogurt sends meeting audio to the speech server, and transcripts and notes to the notes server. Leave a field blank to use Yogurt's.": "Používat AI servery, které už provozujete, místo modelů Yogurtu. Yogurt posílá zvuk schůzky na server pro řeč a přepisy a poznámky na server pro poznámky. Prázdné pole znamená model Yogurtu.",
+  "This address is another computer. Meeting audio will be sent to it.": "Tato adresa je jiný počítač. Bude se na ni posílat zvuk schůzky.",
+  "This address is another computer. Transcripts and notes will be sent to it.": "Tato adresa je jiný počítač. Budou se na ni posílat přepisy a poznámky."
 }
