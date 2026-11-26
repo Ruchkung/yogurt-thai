@@ -814,5 +814,12 @@
   "Mic mute couldn’t be confirmed.": "לא ניתן היה לאשר שהמיקרופון הושתק.",
   "Mic off. Yogurt can’t hear call audio.": "המיקרופון מושתק. Yogurt לא קולט את שמע השיחה.",
   "Thai": "תאית",
-  "Best for meetings in Thai": "הכי טוב לפגישות בתאית"
+  "Best for meetings in Thai": "הכי טוב לפגישות בתאית",
+  "A whisper-server address, with its path if it isn’t /inference.": "כתובת של whisper-server, עם הנתיב אם הוא לא ‎/inference.",
+  "An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.": "שרת תואם OpenAI כמו llama-server. הוא כותב סיכומים ועונה על שאלות.",
+  "Couldn't reach this server. Yogurt will keep trying it.": "אין גישה לשרת הזה. Yogurt ימשיך לנסות.",
+  "Local servers": "שרתים מקומיים",
+  "Notes server": "שרת הערות",
+  "Speech server": "שרת דיבור",
+  "Use AI servers already running on this computer instead of Yogurt's own models. Leave a field blank to use Yogurt's.": "שימוש בשרתי AI שכבר פועלים במחשב הזה במקום במודלים של Yogurt. השאירו שדה ריק כדי להשתמש במודל של Yogurt."
 }

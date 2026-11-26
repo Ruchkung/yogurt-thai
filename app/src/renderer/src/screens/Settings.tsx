@@ -11,6 +11,7 @@ import { onMac, osWords } from '../keys'
 import { applyLanguage } from '../i18n'
 import { flushOpenNotes } from '../noteAutosave'
 import { Jargon } from '../components/Jargon'
+import { LocalServers } from '../components/LocalServers'
 import { SpokenSetting } from '../components/SpokenSetting'
 import { useScrollMemory } from '../useScrollMemory'
 import { appShortcuts } from '../components/Shortcuts'
@@ -265,6 +266,8 @@ export function Settings({ revision = 0, focus }: { revision?: number; focus?: s
             <SpokenSetting />
             <Jargon />
           </div>
+
+          <LocalServers />
 
           <Backup onImported={() => { void window.yogurt.settings.get().then(setPrefs) }} />
 

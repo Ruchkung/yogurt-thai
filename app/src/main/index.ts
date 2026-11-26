@@ -1,3 +1,5 @@
+import { cleanLocalServers } from '../shared/localServers'
+import { RoutedEngine, ServerEngine, serverModelPath } from './serverEngine'
 import { importPhoneRecording } from './companion/phoneImport'
 import { loadWindowState, placeWindow, saveWindowState } from './windowState'
 import { trustSystemCertificates } from './systemCerts'
@@ -665,7 +667,7 @@ app.whenReady().then(() => {
   if (process.platform === 'darwin' || process.platform === 'win32') callWindowOf = (id) => callNames.callWindow(id)
   // Windows and Linux: whisper left the graphics card in a meeting, so the speed check (timed with it) runs again next start
   onWhisperGpuOff(() => speedStore(speedFile()).forget())
-  hookTranscription({ store, modelPath: () => setup.installed()?.asr, smallerModels: () => setup.installed()?.smallerAsr ?? [],
+  hookTranscription({ store, modelPath: () => setup.installed()?.asr, asrServer: () => cleanLocalServers(loadSettings(settingsFile).localServers).asr, smallerModels: () => setup.installed()?.smallerAsr ?? [],
     // the speed check's findings: whisper on the processor (faster there than on built-in graphics), or after the meeting
     cpuOnly: () => !!setup.installed()?.asrCpu, afterMeeting: () => !!setup.installed()?.asrAfterMeeting, send: (seg) => {
     const order = seg.track === 'them' && seg.speaker ? store.speakerOrder(seg.meetingId, seg.speaker) : []
@@ -726,24 +728,28 @@ app.whenReady().then(() => {
   // Windows and Linux: a CUDA build that won't start finds no card; Vulkan is tried next, and kept when it finds one (#32)
   const saved = loadSettings(settingsFile)
   const backends = backendOrder(process.platform, process.env, saved.notesGpuBackend)
-  const engine = isFake() ? new FakeEngine() : new UtilityEngine(join(__dirname, 'engine.js'), {
+  const ownEngine = isFake() ? new FakeEngine() : new UtilityEngine(join(__dirname, 'engine.js'), {
     gpuFallback: process.platform !== 'darwin', cpuCrashes: process.platform === 'linux' && !shim, ...(shim ? { preload: shim } : {}),
     backends, onBackend: (b) => { console.info('NOTES', `graphics found with ${b === 'auto' ? 'the default build' : b}; kept for next time`); updateSettings(settingsFile, { notesGpuBackend: b === 'vulkan' ? b : undefined }) },
     // the card ran out of memory (#165): fewer layers from the next launch on, too
     ...(saved.notesGpuLayers ? { gpuLayers: saved.notesGpuLayers } : {}), onGpuLayers: (l) => updateSettings(settingsFile, { notesGpuLayers: l }),
   })
-  if (engine instanceof UtilityEngine) probeGpu = () => engine.probe().then((g) => {
+  if (ownEngine instanceof UtilityEngine) probeGpu = () => ownEngine.probe().then((g) => {
     console.info('NOTES', `graphics: ${g.gpuType || 'none'}${g.gpuNames.length ? ` (${g.gpuNames.join(', ')})` : ''}, ${g.vramTotalGB.toFixed(1)} GB`)
     return g
   }, (e) => { console.warn("couldn't check the graphics", e); return null })
   // fake mode: the fixed Mac (a bigger one) unless a test asks for a 16 GB one
   const smallMac = isFake() ? process.env.YOGURT_FAKE_SMALL_MAC === '1' : isSmallMac(os.totalmem())
   const memory = notesMemory(smallMac)
-  const model = createNotesModel({ engine, modelPath: () => setup.notesPath(), onLoaded: path => setup.notesModelLoaded(path), contextSize: memory.contextSize, ...(memory.releaseSpeech ? { beforeLoad: releaseIdleSpeech } : {}) })
+  // the person's own notes server (Settings → Local servers), when set, writes the notes instead of Yogurt's model
+  const llmServer = () => cleanLocalServers(loadSettings(settingsFile).localServers).llm
+  const engine = new RoutedEngine(ownEngine, new ServerEngine(llmServer, ownEngine))
+  const notesPath = () => { const url = llmServer(); return url ? serverModelPath(url) : setup.notesPath() }
+  const model = createNotesModel({ engine, modelPath: notesPath, onLoaded: path => setup.notesModelLoaded(path), contextSize: memory.contextSize, ...(memory.releaseSpeech ? { beforeLoad: releaseIdleSpeech } : {}) })
   // first run: the notes model lands after recording already works; jobs wait in the queue for it
   // the embedding model (meaning search across meetings) runs in the same worker and is let go with the notes model
   const embedder = createEmbedder({ engine, modelPath: () => setup.installed()?.embed, id: bundledCatalog.embedding.id, dims: bundledCatalog.embedding.dims })
-  const queue = createQueue({ recording: () => !!activeMeeting(), smallMac, idleMs: memory.idleMs, backlogMs: transcriptionBacklogMs, onIdle: () => { void model.unload().catch(e => console.error('letting the notes model go failed', e)); void embedder.unload() }, modelReady: () => !!setup.notesPath() })
+  const queue = createQueue({ recording: () => !!activeMeeting(), smallMac, idleMs: memory.idleMs, backlogMs: transcriptionBacklogMs, onIdle: () => { void model.unload().catch(e => console.error('letting the notes model go failed', e)); void embedder.unload() }, modelReady: () => !!notesPath() })
   ipcMain.handle('setup:remove-upgrade', () => setup.removeUpgrade(remove => queue.enqueue(async () => {
     await model.unload()
     remove()
@@ -784,7 +790,7 @@ app.whenReady().then(() => {
   let finishing = false, discardUnsaved = false
   busyNow = () => !!activeMeeting() || queue.busy() || setup.state.phase === 'checking' || setup.state.phase === 'downloading'
   const savedTranscriptions = createSavedTranscriptions({
-    store, ready: () => !!setup.installed()?.asr, recording: () => !!activeMeeting() || !!resumingId || finishing, live: transcriptOpen,
+    store, ready: () => !!setup.installed()?.asr || !!cleanLocalServers(loadSettings(settingsFile).localServers).asr, recording: () => !!activeMeeting() || !!resumingId || finishing, live: transcriptOpen,
     tracks: async id => {
       await recordingSettled(id)
       const tracks: Partial<Record<'me'|'them',AsyncIterable<Float32Array>>> = {}
@@ -870,7 +876,7 @@ app.whenReady().then(() => {
       win?.webContents.send('conversations:changed', v)
       if (v.chips.length === 1 && v.chips[0].kind === 'meeting') win?.webContents.send('chat:changed', { ...v, meetingId: v.chips[0].id })
     }, sendList: (l) => win?.webContents.send('conversations:list', l),
-    waitsForMeeting, waitsForModel: () => !setup.notesPath(),
+    waitsForMeeting, waitsForModel: () => !notesPath(),
     // a meeting read in ahead during a recording only where reading ahead is allowed (32 GB and up; the fake Mac is big)
     warmAllowed: () => !activeMeeting() || (isFake() ? !smallMac : readAheadAllowed(os.totalmem())),
   })
@@ -961,7 +967,7 @@ app.whenReady().then(() => {
       setMyNotes: (id, md) => noteSaved(id, notes.replace(id, 'mine', md)),
       setSummary: (id, md) => noteSaved(id, notes.replace(id, 'enhanced', md)),
       rewriteSummary: (id, instruction) => (['waiting', 'writing'].includes(notes.view(id).status) || !writeAgain(id, instruction) ? 'busy' : 'queued'),
-      notesReady: () => !!setup.notesPath(),
+      notesReady: () => !!notesPath(),
       startRecording: (o) => recordingControls?.start(o) ?? Promise.resolve({ error: 'failed' as const }),
       pauseRecording: (id, paused) => recordingControls?.pause(id, paused) ?? false,
       stopRecording: (id) => { if (activeMeeting()?.id !== id) return false; stopMeeting(id, 'ai-app'); return true },

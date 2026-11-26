@@ -792,5 +792,12 @@
   "Mic mute couldn’t be confirmed.": "Nem sikerült megerősíteni a mikrofon némítását.",
   "Mic off. Yogurt can’t hear call audio.": "A mikrofon néma. A Yogurt nem érzékeli a hívás hangját.",
   "Thai": "Thai",
-  "Best for meetings in Thai": "Thai nyelvű megbeszélésekhez a legjobb"
+  "Best for meetings in Thai": "Thai nyelvű megbeszélésekhez a legjobb",
+  "A whisper-server address, with its path if it isn’t /inference.": "Egy whisper-server címe, az útvonallal, ha az nem /inference.",
+  "An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.": "OpenAI-kompatibilis szerver, például llama-server. Összefoglalókat ír és kérdésekre válaszol.",
+  "Couldn't reach this server. Yogurt will keep trying it.": "A szerver nem érhető el. A Yogurt tovább próbálkozik.",
+  "Local servers": "Helyi szerverek",
+  "Notes server": "Jegyzetszerver",
+  "Speech server": "Beszédszerver",
+  "Use AI servers already running on this computer instead of Yogurt's own models. Leave a field blank to use Yogurt's.": "A gépen már futó AI-szerverek használata a Yogurt saját modelljei helyett. Hagyd üresen a mezőt a Yogurt modelljéhez."
 }

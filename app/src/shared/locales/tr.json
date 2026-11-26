@@ -792,5 +792,12 @@
   "Mic mute couldn’t be confirmed.": "Mikrofonun sessize alındığı doğrulanamadı.",
   "Mic off. Yogurt can’t hear call audio.": "Mikrofon kapalı. Yogurt aramanın sesini alamıyor.",
   "Thai": "Tayca",
-  "Best for meetings in Thai": "Tayca toplantılar için en iyisi"
+  "Best for meetings in Thai": "Tayca toplantılar için en iyisi",
+  "A whisper-server address, with its path if it isn’t /inference.": "Bir whisper-server adresi; /inference değilse yolu da ekleyin.",
+  "An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.": "llama-server gibi OpenAI uyumlu bir sunucu. Özetleri yazar ve soruları yanıtlar.",
+  "Couldn't reach this server. Yogurt will keep trying it.": "Bu sunucuya ulaşılamadı. Yogurt denemeye devam edecek.",
+  "Local servers": "Yerel sunucular",
+  "Notes server": "Not sunucusu",
+  "Speech server": "Konuşma sunucusu",
+  "Use AI servers already running on this computer instead of Yogurt's own models. Leave a field blank to use Yogurt's.": "Yogurt’un kendi modelleri yerine bu bilgisayarda zaten çalışan yapay zekâ sunucularını kullanın. Yogurt’un modelini kullanmak için alanı boş bırakın."
 }

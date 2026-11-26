@@ -762,5 +762,12 @@
   "Mic mute couldn’t be confirmed.": "无法确认麦克风是否已静音。",
   "Mic off. Yogurt can’t hear call audio.": "麦克风已关闭。Yogurt 无法接收通话音频。",
   "Thai": "泰语",
-  "Best for meetings in Thai": "最适合泰语会议"
+  "Best for meetings in Thai": "最适合泰语会议",
+  "A whisper-server address, with its path if it isn’t /inference.": "whisper-server 地址；如果不是 /inference，请包含路径。",
+  "An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.": "兼容 OpenAI 的服务器，例如 llama-server。用于撰写摘要和回答问题。",
+  "Couldn't reach this server. Yogurt will keep trying it.": "无法连接此服务器。Yogurt 会继续尝试。",
+  "Local servers": "本地服务器",
+  "Notes server": "笔记服务器",
+  "Speech server": "语音服务器",
+  "Use AI servers already running on this computer instead of Yogurt's own models. Leave a field blank to use Yogurt's.": "使用这台电脑上已在运行的 AI 服务器，而不是 Yogurt 自带的模型。留空则使用 Yogurt 的模型。"
 }

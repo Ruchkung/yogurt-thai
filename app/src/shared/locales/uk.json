@@ -832,5 +832,12 @@
   "Mic mute couldn’t be confirmed.": "Не вдалося підтвердити вимкнення мікрофона.",
   "Mic off. Yogurt can’t hear call audio.": "Мікрофон вимкнено. Yogurt не чує звуку дзвінка.",
   "Thai": "Тайська",
-  "Best for meetings in Thai": "Найкраще для зустрічей тайською"
+  "Best for meetings in Thai": "Найкраще для зустрічей тайською",
+  "A whisper-server address, with its path if it isn’t /inference.": "Адреса whisper-server, зі шляхом, якщо це не /inference.",
+  "An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.": "Сервер, сумісний з OpenAI, наприклад llama-server. Пише підсумки й відповідає на запитання.",
+  "Couldn't reach this server. Yogurt will keep trying it.": "Не вдалося під’єднатися до сервера. Yogurt пробуватиме далі.",
+  "Local servers": "Локальні сервери",
+  "Notes server": "Сервер нотаток",
+  "Speech server": "Сервер мовлення",
+  "Use AI servers already running on this computer instead of Yogurt's own models. Leave a field blank to use Yogurt's.": "Використовувати ШІ-сервери, що вже працюють на цьому комп’ютері, замість моделей Yogurt. Залиште поле порожнім, щоб використовувати моделі Yogurt."
 }

@@ -762,5 +762,12 @@
   "Mic mute couldn’t be confirmed.": "마이크가 음소거되었는지 확인할 수 없습니다.",
   "Mic off. Yogurt can’t hear call audio.": "마이크가 꺼져 있습니다. Yogurt에서 통화 소리를 들을 수 없습니다.",
   "Thai": "태국어",
-  "Best for meetings in Thai": "태국어 회의에 가장 적합"
+  "Best for meetings in Thai": "태국어 회의에 가장 적합",
+  "A whisper-server address, with its path if it isn’t /inference.": "whisper-server 주소입니다. /inference가 아니면 경로도 포함하세요.",
+  "An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.": "llama-server 같은 OpenAI 호환 서버입니다. 요약을 쓰고 질문에 답합니다.",
+  "Couldn't reach this server. Yogurt will keep trying it.": "이 서버에 연결할 수 없습니다. Yogurt가 계속 시도합니다.",
+  "Local servers": "로컬 서버",
+  "Notes server": "노트 서버",
+  "Speech server": "음성 서버",
+  "Use AI servers already running on this computer instead of Yogurt's own models. Leave a field blank to use Yogurt's.": "Yogurt 자체 모델 대신 이 컴퓨터에서 이미 실행 중인 AI 서버를 사용합니다. 비워 두면 Yogurt 모델을 사용합니다."
 }

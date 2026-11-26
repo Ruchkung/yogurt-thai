@@ -792,5 +792,12 @@
   "Mic mute couldn’t be confirmed.": "মাইক মিউট হয়েছে কি না নিশ্চিত করা যায়নি।",
   "Mic off. Yogurt can’t hear call audio.": "মাইক বন্ধ। Yogurt কলের শব্দ শুনতে পাচ্ছে না।",
   "Thai": "থাই",
-  "Best for meetings in Thai": "থাই ভাষার মিটিংয়ের জন্য সেরা"
+  "Best for meetings in Thai": "থাই ভাষার মিটিংয়ের জন্য সেরা",
+  "A whisper-server address, with its path if it isn’t /inference.": "একটি whisper-server ঠিকানা, /inference না হলে পাথসহ।",
+  "An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.": "llama-server-এর মতো OpenAI-সামঞ্জস্যপূর্ণ সার্ভার। এটি সারাংশ লেখে ও প্রশ্নের উত্তর দেয়।",
+  "Couldn't reach this server. Yogurt will keep trying it.": "এই সার্ভারে পৌঁছানো যায়নি। Yogurt চেষ্টা চালিয়ে যাবে।",
+  "Local servers": "লোকাল সার্ভার",
+  "Notes server": "নোট সার্ভার",
+  "Speech server": "স্পিচ সার্ভার",
+  "Use AI servers already running on this computer instead of Yogurt's own models. Leave a field blank to use Yogurt's.": "Yogurt-এর নিজস্ব মডেলের বদলে এই কম্পিউটারে চলমান AI সার্ভার ব্যবহার করুন। Yogurt-এর মডেল ব্যবহার করতে ঘর ফাঁকা রাখুন।"
 }

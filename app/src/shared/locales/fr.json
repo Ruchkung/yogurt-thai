@@ -820,5 +820,12 @@
   "Mic mute couldn’t be confirmed.": "Impossible de confirmer la coupure du micro.",
   "Mic off. Yogurt can’t hear call audio.": "Micro coupé. Yogurt ne reçoit pas le son de l’appel.",
   "Thai": "Thaï",
-  "Best for meetings in Thai": "Idéal pour les réunions en thaï"
+  "Best for meetings in Thai": "Idéal pour les réunions en thaï",
+  "A whisper-server address, with its path if it isn’t /inference.": "Adresse d’un whisper-server, avec son chemin s’il ne s’agit pas de /inference.",
+  "An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.": "Un serveur compatible OpenAI comme llama-server. Il rédige les résumés et répond aux questions.",
+  "Couldn't reach this server. Yogurt will keep trying it.": "Impossible de joindre ce serveur. Yogurt continuera d’essayer.",
+  "Local servers": "Serveurs locaux",
+  "Notes server": "Serveur de notes",
+  "Speech server": "Serveur vocal",
+  "Use AI servers already running on this computer instead of Yogurt's own models. Leave a field blank to use Yogurt's.": "Utiliser des serveurs d’IA qui tournent déjà sur cet ordinateur au lieu des modèles de Yogurt. Laissez un champ vide pour utiliser ceux de Yogurt."
 }

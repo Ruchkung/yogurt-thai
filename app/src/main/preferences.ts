@@ -1,3 +1,4 @@
+import { cleanLocalServers, cleanServerUrl, serverAnswers } from '../shared/localServers'
 import { BrowserWindow, ipcMain, nativeTheme } from 'electron'
 import { includesRecordingCredit, loadSettings, localeOf, recordingReminderOn, spokenSetting, stopsWhenCallEnds, updateSettings, visibilityOf, summaryLanguageSetting } from './settings'
 import { systemLocale } from './locale'
@@ -60,7 +61,7 @@ export function hookPreferences(d: { file: string; permissions: Permissions; ask
     // what the Mac says, so a change in System Settings shows here
     // locale: every window (main, card, widget) shows the interface language
     // language: the one picked ('' is the Mac's); locale: the one in use; systemLocale: the Mac's, for the picker
-    return { theme: s.theme ?? 'system', openAtLogin: d.loginOn(s.openAtLogin), showInMenuBar: visible.showInMenuBar, showNextMeeting: s.showNextMeeting !== false, showRecordingPill: visible.showRecordingPill, appVisibility: !visible.showInMenuBar ? 'dock' : visible.showInDock ? 'both' : 'menu-bar', language: isLocale(s.language) ? s.language : '', locale: localeOf(s, systemLocale()), systemLocale: systemLocale(), myName: s.myName?.trim() || d.macName(), macName: d.macName(), stopWhenCallEnds: stopsWhenCallEnds(s), recordingReminder: recordingReminderOn(s), includeRecordingCredit: includesRecordingCredit(s), keepRecordings: s.keepRecordings !== false, jargon: cleanJargon(s.jargon), spoken: spokenSetting(s), summaryLanguage: summaryLanguageSetting(s) }
+    return { theme: s.theme ?? 'system', openAtLogin: d.loginOn(s.openAtLogin), showInMenuBar: visible.showInMenuBar, showNextMeeting: s.showNextMeeting !== false, showRecordingPill: visible.showRecordingPill, appVisibility: !visible.showInMenuBar ? 'dock' : visible.showInDock ? 'both' : 'menu-bar', language: isLocale(s.language) ? s.language : '', locale: localeOf(s, systemLocale()), systemLocale: systemLocale(), myName: s.myName?.trim() || d.macName(), macName: d.macName(), stopWhenCallEnds: stopsWhenCallEnds(s), recordingReminder: recordingReminderOn(s), includeRecordingCredit: includesRecordingCredit(s), keepRecordings: s.keepRecordings !== false, jargon: cleanJargon(s.jargon), spoken: spokenSetting(s), summaryLanguage: summaryLanguageSetting(s), localServers: cleanLocalServers(s.localServers) }
   }
   ipcMain.handle('settings:get', read)
   // what the person is called in meetings (who "You" is when naming voices); blank: the Mac's full name again
@@ -122,6 +123,16 @@ export function hookPreferences(d: { file: string; permissions: Permissions; ask
     return true
   }
   ipcMain.handle('settings:spoken', (_e, v: unknown) => { setSpoken(v) })
+  // AI servers already running on this computer; a blank or unusable address goes back to Yogurt's own model
+  ipcMain.handle('settings:local-servers', (_e, v: unknown) => {
+    const servers = cleanLocalServers(v)
+    updateSettings(d.file, { localServers: Object.keys(servers).length ? servers : undefined })
+    return servers
+  })
+  ipcMain.handle('settings:check-server', (_e, kind: unknown, url: unknown) => {
+    const clean = cleanServerUrl(url)
+    return (kind === 'asr' || kind === 'llm') && clean ? serverAnswers(kind, clean) : false
+  })
   ipcMain.handle('settings:menu-bar', (_e, on: unknown) => {
     if (os === 'darwin' || typeof on !== 'boolean') return
     updateSettings(d.file, { showInMenuBar: on ? undefined : false })
