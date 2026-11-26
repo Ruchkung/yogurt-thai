@@ -830,5 +830,7 @@
   "Unmute my mic in Yogurt": "Включить мой микрофон в Yogurt",
   "Mic will stay off on resume": "При возобновлении записи микрофон останется выключенным",
   "Mic mute couldn’t be confirmed.": "Не удалось подтвердить отключение микрофона.",
-  "Mic off. Yogurt can’t hear call audio.": "Микрофон выключен. Yogurt не слышит звук звонка."
+  "Mic off. Yogurt can’t hear call audio.": "Микрофон выключен. Yogurt не слышит звук звонка.",
+  "Thai": "Тайский",
+  "Best for meetings in Thai": "Лучше всего для встреч на тайском"
 }

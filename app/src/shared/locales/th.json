@@ -151,7 +151,7 @@
   "Empty the Trash?": "ล้างถังขยะไหม",
   "English": "อังกฤษ",
   "English only": "อังกฤษเท่านั้น",
-  "English only is faster and more accurate. Pick Multi-language for meetings in other languages.": "อังกฤษเท่านั้นเร็วกว่าและแม่นยำกว่า เลือกหลายภาษาสำหรับการประชุมในภาษาอื่น",
+  "English only is faster and more accurate. Pick Multi-language for meetings in other languages.": "อังกฤษเท่านั้นและภาษาไทยเร็วกว่าและแม่นยำกว่า เลือกหลายภาษาสำหรับการประชุมในภาษาอื่น",
   "Everyone else": "ทุกคนที่เหลือ",
   "Everything stays on your Mac.": "ทุกอย่างอยู่บน Mac ของคุณ",
   "Everything stays on your computer.": "ทุกอย่างอยู่บนคอมพิวเตอร์ของคุณ",
@@ -760,5 +760,7 @@
   "Unmute my mic in Yogurt": "เปิดไมค์ของฉันใน Yogurt",
   "Mic will stay off on resume": "ไมค์จะยังปิดอยู่เมื่อบันทึกต่อ",
   "Mic mute couldn’t be confirmed.": "ยืนยันไม่ได้ว่าปิดไมค์แล้ว",
-  "Mic off. Yogurt can’t hear call audio.": "ไมค์ปิดอยู่ Yogurt ไม่ได้ยินเสียงการโทร"
+  "Mic off. Yogurt can’t hear call audio.": "ไมค์ปิดอยู่ Yogurt ไม่ได้ยินเสียงการโทร",
+  "Thai": "ภาษาไทย",
+  "Best for meetings in Thai": "แม่นที่สุดสำหรับการประชุมภาษาไทย"
 }

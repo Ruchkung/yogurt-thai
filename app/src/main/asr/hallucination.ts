@@ -33,6 +33,8 @@ const GUESSES = new Set([
   'thank you bye', 'bye', 'bye bye', 'please subscribe', 'like and subscribe', 'for more information visit www fema org',
   'subtitles by the amara org community', 'untertitel der amara org community', 'sous titres réalisés para la communauté d amara org',
   'sous titres réalisés par la communauté d amara org', 'ご視聴ありがとうございました', 'продолжение следует',
+  // Thai: video sign-offs whisper says over quiet audio
+  'ขอบคุณที่รับชม', 'ขอบคุณที่รับชมครับ', 'ขอบคุณที่รับชมค่ะ', 'ขอบคุณครับ', 'ขอบคุณค่ะ', 'ฝากกดไลค์กดแชร์กดติดตามด้วยนะครับ',
 ].map((x) => tokens(x).join(' ')))
 
 /** One of whisper's stock lines for silence. Only dropped where the audio was not clearly speech: people do say thank you. */

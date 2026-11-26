@@ -5,10 +5,10 @@ import { WHISPER_LANGUAGES, type Spoken } from '../../../shared/spoken'
 import { t } from '../../../shared/i18n'
 
 /** the names shown on the chip and in Settings */
-export const spokenName = (s: Spoken): string => (s === 'en' ? t('English') : t('Multi-language'))
+export const spokenName = (s: Spoken): string => (s === 'en' ? t('English') : s === 'th' ? t('Thai') : t('Multi-language'))
 
 /**
- * The spoken language under the note's bar, beside the mic, as a menu: English only (faster, nothing guessed) or
+ * The spoken language under the note's bar, beside the mic, as a menu: English only or Thai (faster, nothing guessed) or
  * Multi-language. Choosing counts for the recording going on from its next words, and is remembered for the next ones.
  */
 export function SpokenMenu() {
@@ -76,6 +76,13 @@ export function SpokenMenu() {
               <span className="text-xs text-muted">{t('Highest quality')}</span>
             </span>
             {tick(spoken === 'en')}
+          </button>
+          <button role="menuitemradio" aria-checked={spoken === 'th'} data-testid="spoken-th" onClick={() => choose('th')} className={row}>
+            <span className="flex min-w-0 flex-col">
+              <span>{t('Thai')}</span>
+              <span className="text-xs text-muted">{t('Best for meetings in Thai')}</span>
+            </span>
+            {tick(spoken === 'th')}
           </button>
           <button role="menuitemradio" aria-checked={spoken === 'multi'} data-testid="spoken-multi" onClick={() => choose('multi')} className={row}>
             <span className="flex min-w-0 flex-col">

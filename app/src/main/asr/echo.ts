@@ -1,3 +1,5 @@
+import { splitThai } from '../../shared/thai'
+
 /**
  * Without headphones the mic hears the other side's voice from the speakers, so the same words land on both tracks.
  * The computer's own sound is clean, so the copy on the mic track is the one dropped.
@@ -31,9 +33,9 @@ export type Moment = { correlated: boolean; loud: boolean; pure: boolean }
  */
 export type EchoCheck = { echo?: boolean; correlatedAt?: (ms: number) => boolean; over?: (startMs: number, endMs: number) => Moment | undefined }
 
-/** Words, lowercased and without punctuation. Text without spaces (Japanese, Chinese) is compared by character. */
+/** Words, lowercased and without punctuation. Text without spaces (Japanese, Chinese) is compared by character, Thai by its words. */
 export function tokens(text: string): string[] {
-  const words = text.toLowerCase().match(/[\p{L}\p{N}]+/gu) ?? []
+  const words = splitThai(text.toLowerCase().match(/[\p{L}\p{N}\p{M}]+/gu) ?? [])
   return words.flatMap((w) => (/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u.test(w) ? [...w] : [w]))
 }
 

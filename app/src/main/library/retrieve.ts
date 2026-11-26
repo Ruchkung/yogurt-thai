@@ -6,6 +6,7 @@ import type { Embedder } from './embedder'
 import { parseFilters, type Filters } from './filters'
 import { questionKind, type Kind } from './kind'
 import { fuse } from './vectors'
+import { splitThai, THAI, THAI_STOP } from '../../shared/thai'
 
 /** chunks given to the model for a "find" question */
 export const FIND_CHUNKS = 12
@@ -25,7 +26,9 @@ export type Retrieved = { kind: Kind; filters: Filters; items: Item[] }
 /** words that say nothing about what to find */
 const STOP = new Set(('what when where which while who whom whose why how did does doing done the and for about say said says tell told was were are is that this these those with from have has had having our ours my mine you your yours they them their there here been being will would could should can may might any all some also into just like then than out get got its his her hers she him one two from please give show list want need know meeting meetings call calls talk talked talking mention mentioned think thought anything something everything really very much many more most other others same such only own over under again further once ' +
   'did not yes went going goes gone felt feel').split(' '))
-const wordsOf = (q: string) => [...new Set(q.toLowerCase().split(/[^\p{L}\p{N}]+/u).filter((w) => w.length > 2 && !STOP.has(w)))]
+/** the question's words worth searching for; Thai is split into its words first (it has no spaces between them) */
+const wordsOf = (q: string) => [...new Set(splitThai(q.toLowerCase().split(/[^\p{L}\p{N}\p{M}]+/u))
+  .filter((w) => (THAI.test(w) ? w.length > 1 && !THAI_STOP.has(w) : w.length > 2 && !STOP.has(w))))]
 
 type Deps = { store: Pick<Store, 'meeting' | 'notes'>; library: Library; indexer: Pick<Indexer, 'ensure' | 'vectors'>; embedder: Pick<Embedder, 'query' | 'ready'> }
 

@@ -20,7 +20,7 @@ import type { Person } from './types'
 export type SearchDate = { start: number; end: number }
 export type SearchOptions = { now?: Date; locale?: string; language?: string; people?: Person[] }
 const stopWords = new Set(['with', 'about', 'from', 'on', 'the', 'a', 'and', 'meeting'])
-export const searchWords = (text: string) => text.toLocaleLowerCase().split(/[^\p{L}\p{N}]+/u).filter(w => w && !stopWords.has(w))
+export const searchWords = (text: string) => text.toLocaleLowerCase().split(/[^\p{L}\p{N}\p{M}]+/u).filter(w => w && !stopWords.has(w))
 const parsers: Record<string, Chrono> = { en, de, fr, ja, pt, nl, ru, es, uk, it, sv, fi, vi, id, ar, 'zh-cn': hans, 'zh-tw': hant }
 
 /** Calendar boundaries use local dates, including days that are not 24 hours long. */

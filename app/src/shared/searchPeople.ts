@@ -38,7 +38,7 @@ export function matchSearchPeople(query: string, people: Person[], chosen: Perso
   let text = query
   for (const match of matches) text = text.slice(0, match.start) + ' '.repeat(match.end - match.start) + text.slice(match.end)
   const date = parseSearchQuery(text, options).dateSpan
-  const tokens = [...text.matchAll(/[\p{L}\p{N}][\p{L}\p{N}@._+'’-]*/gu)]
+  const tokens = [...text.matchAll(/[\p{L}\p{N}][\p{L}\p{N}\p{M}@._+'’-]*/gu)]
   const suggestions: SearchPersonMatch[] = []
   for (const person of candidates) {
     if (matches.some(m => searchPersonKey(m.person) === searchPersonKey(person))) continue

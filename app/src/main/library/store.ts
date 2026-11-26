@@ -4,6 +4,7 @@ import type { DatabaseSync } from 'node:sqlite'
 import { createHash, randomUUID } from 'node:crypto'
 import type { Chunk } from './chunks'
 import type { LibrarySource } from '../../shared/types'
+import { THAI } from '../../shared/thai'
 
 type Row = Record<string, unknown>
 
@@ -139,10 +140,18 @@ export class Library {
    */
   wordHits(words: string[], meetingIds?: string[], limit = 300, at?: Map<number, number>): number[] {
     if (!words.length || meetingIds?.length === 0) return []
-    const match = words.map((w) => `"${w.replace(/"/g, '')}"`).join(' OR ')
     const within = meetingIds ? ` AND s.meeting_id IN (${meetingIds.map(() => '?').join(', ')})` : ''
-    const segs = this.db.prepare(`SELECT s.meeting_id AS meeting_id, s.start_ms AS start_ms FROM segments_fts JOIN segments s ON s.id = segments_fts.rowid
-      WHERE segments_fts MATCH ? AND s.hidden = 0${within} ORDER BY segments_fts.rank LIMIT ?`).all(match, ...(meetingIds ?? []), limit) as Row[]
+    // the text index sees a run of Thai as one token, so Thai words are looked for inside the lines instead
+    const thai = words.filter((w) => THAI.test(w)), other = words.filter((w) => !THAI.test(w))
+    const match = other.map((w) => `"${w.replace(/"/g, '')}"`).join(' OR ')
+    const segs = (match ? this.db.prepare(`SELECT s.meeting_id AS meeting_id, s.start_ms AS start_ms FROM segments_fts JOIN segments s ON s.id = segments_fts.rowid
+      WHERE segments_fts MATCH ? AND s.hidden = 0${within} ORDER BY segments_fts.rank LIMIT ?`).all(match, ...(meetingIds ?? []), limit) as Row[] : [])
+    if (thai.length) {
+      // lines with the most of the Thai words first
+      const n = thai.map(() => '(instr(s.text, ?) > 0)').join(' + ')
+      segs.push(...this.db.prepare(`SELECT s.meeting_id AS meeting_id, s.start_ms AS start_ms, ${n} AS n FROM segments s
+        WHERE s.hidden = 0${within} AND (${n}) > 0 ORDER BY n DESC, s.start_ms LIMIT ?`).all(...thai, ...(meetingIds ?? []), ...thai, limit) as Row[])
+    }
     const of = this.db.prepare('SELECT id FROM library_chunks WHERE meeting_id = ? AND start_ms <= ? ORDER BY start_ms DESC LIMIT 1')
     const out = new Set<number>()
     for (const s of segs) {

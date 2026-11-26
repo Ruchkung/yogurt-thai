@@ -1,6 +1,7 @@
 import { AUDIO_SPEAKER } from '../../shared/audioUpload'
 import type { Segment } from '../store'
 import { transcriptText } from '../notes/enhance'
+import { wordCount } from '../../shared/thai'
 
 /**
  * A meeting's transcript cut into pieces of about 300 words, for search across meetings: big enough to hold a point
@@ -12,7 +13,8 @@ export const CHUNK_WORDS = 300
 export type Chunk = { startMs: number; endMs: number; text: string; speakers: string[] }
 
 const who = (s: Segment) => (s.speaker === AUDIO_SPEAKER ? 'Audio' : s.track === 'me' ? 'You' : s.speaker || 'Them')
-const count = (s: string) => s.split(/\s+/).filter(Boolean).length
+/** Thai words one by one: its spaces fall between phrases, not words */
+const count = (s: string) => wordCount(s)
 
 /** segments: the meeting's visible lines, in order (hidden echo lines are left out by the store) */
 export function chunkTranscript(segments: Segment[]): Chunk[] {

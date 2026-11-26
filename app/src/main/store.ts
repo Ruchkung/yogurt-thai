@@ -3,6 +3,7 @@ import type { TranscriptionState } from '../shared/transcription'
 import { eventIds, type CalEvent } from './calendar'
 import { matchSearchPeople, searchPersonKey, uniqueSearchPeople } from '../shared/searchPeople'
 import { oneEdit, parseSearchQuery, type SearchOptions } from '../shared/searchQuery'
+import { splitThai, THAI, THAI_STOP } from '../shared/thai'
 import { echoConfidence } from './asr/echo'
 import { backfillPeople, rememberPeople, resolvePeople } from './people'
 import { attendeeMembership, matchingOwnEmail, ownAddress, personEmail, sameAttendeeMembership } from '../shared/people'
@@ -87,8 +88,9 @@ const toSegment = (r: Row): Segment => ({
 })
 
 /** Chinese, Japanese and Korean letters: searched by pairs of characters (they have NOFOLDERS_P between words) */
-const CJK = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/u
-const CJK_RUNS = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]+/gu
+/** scripts the text index sees a whole run of as one token: Chinese, Japanese, Korean, and Thai (no spaces between words) */
+const CJK = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}\p{Script=Thai}]/u
+const CJK_RUNS = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}\p{Script=Thai}]+/gu
 
 /** A named group of meetings; a meeting can be in several. count: how many meetings are in it */
 export type Folder = FolderAppearance & { id: string; name: string; createdAt: number; count: number }
@@ -138,6 +140,9 @@ const hitOf = (meetingId: string, parts: SnippetPart[]): SearchHit => ({ meeting
 
 /** pairs of characters in each run (one character alone when that is all there is) */
 const pairsOf = (runs: string[]) => [...new Set(runs.flatMap((r) => (r.length < 2 ? [r] : Array.from({ length: r.length - 1 }, (_, i) => r.slice(i, i + 2)))))]
+
+/** what to look for inside the lines: a Thai word whole (not a particle), pairs of characters for the others */
+const piecesOf = (runs: string[]) => [...new Set([...pairsOf(runs.filter((r) => !THAI.test(r))), ...splitThai(runs.filter((r) => THAI.test(r))).filter((w) => !THAI_STOP.has(w))])]
 
 /** a short piece of text around the first pair, every pair in it marked */
 function around(raw: string, pairs: string[]): SnippetPart[] {
@@ -696,7 +701,10 @@ export class Store {
   search(q: string, limit: number, folder?: string, options: SearchOptions = {}): SearchHit[] {
     const parsedPeople = matchSearchPeople(q, this.searchPeople(), options.people, options)
     const people = uniqueSearchPeople([...(options.people ?? []), ...parsedPeople.matches.map(m => m.person)])
-    const { words, date } = parseSearchQuery(parsedPeople.text, options)
+    const parsed = parseSearchQuery(parsedPeople.text, options)
+    const { date } = parsed
+    // Thai has no spaces between words: each of its words is a word to find
+    const words = splitThai(parsed.words)
     if (!words.length && !date && !people.length) return []
     const inScope = (col: string) => notTrashed(col)
       + (folder == null ? '' : ` AND ${col} IN (SELECT meeting_id FROM folder_meetings WHERE folder_id = ?)`)
@@ -709,7 +717,7 @@ export class Store {
       const attendees = (JSON.parse(String(r.attendees)) as Person[]).map(searchPersonKey)
       return people.every(p => attendees.includes(searchPersonKey(p)))
     })
-    const tokens = (text: string) => text.toLocaleLowerCase().split(/[^\p{L}\p{N}]+/u).filter(Boolean)
+    const tokens = (text: string) => text.toLocaleLowerCase().split(/[^\p{L}\p{N}\p{M}]+/u).filter(Boolean)
     const phrase = words.join(' ')
     const hasPhrase = (text: string) => words.length > 1 && ` ${tokens(text).join(' ')} `.includes(` ${phrase} `)
     const matchScore = (text: string, word: string, prefix: boolean, fuzzy: boolean, score: number) => {
@@ -742,7 +750,7 @@ export class Store {
       for (const r of hits) add(String(r.meeting_id), partsOf(String(r.snippet)), Number(r.score))
       // FTS treats CJK runs as one token; retain matching inside those runs.
       if (CJK.test(word)) {
-        const pairs = pairsOf([word])
+        const pairs = THAI.test(word) ? [word] : pairsOf([word])
         const where = (col: string) => pairs.map(() => `instr(${col}, ?) > 0`).join(' AND ')
         for (const r of this.db.prepare(`SELECT meeting_id, coalesce(enhanced, '') || char(10) || mine AS text FROM notes
           WHERE ${where("coalesce(enhanced, '') || char(10) || mine")}${inScope('meeting_id')}`).all(...pairs, ...args) as Row[]) add(String(r.meeting_id), around(String(r.text), pairs), 20)
@@ -773,14 +781,14 @@ export class Store {
    * characters come after, most pairs first.
    */
   segmentHits(meetingId: string, question: string, limit = 200): number[] {
-    const words = [...new Set(question.toLowerCase().split(/[^\p{L}\p{N}]+/u).filter((w) => w.length > 1 || CJK.test(w)))]
-    if (!words.length) return []
-    const found = (this.db.prepare(`SELECT s.id AS id FROM segments_fts JOIN segments s ON s.id = segments_fts.rowid
+    const words = [...new Set(question.toLowerCase().split(/[^\p{L}\p{N}\p{M}]+/u).filter((w) => (w.length > 1 || CJK.test(w)) && !THAI.test(w)))]
+    const found = words.length ? (this.db.prepare(`SELECT s.id AS id FROM segments_fts JOIN segments s ON s.id = segments_fts.rowid
       WHERE segments_fts MATCH ? AND s.meeting_id = ? AND s.hidden = 0 ORDER BY segments_fts.rank LIMIT ?`).all(words.map((w) => `"${w}"`).join(' OR '), meetingId, limit) as Row[])
-      .map((r) => Number(r.id))
+      .map((r) => Number(r.id)) : []
     const runs = question.match(CJK_RUNS) ?? []
     if (!runs.length) return found
-    const pairs = pairsOf(runs)
+    const pairs = piecesOf(runs)
+    if (!pairs.length) return found
     const seen = new Set(found)
     const scored = (this.db.prepare('SELECT id, text FROM segments WHERE meeting_id = ? AND hidden = 0').all(meetingId) as Row[])
       .map((r) => ({ id: Number(r.id), n: pairs.filter((p) => String(r.text).includes(p)).length }))

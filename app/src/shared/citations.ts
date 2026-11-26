@@ -167,7 +167,7 @@ function sourceSentences(text: string): Array<{ text: string; index: number; end
   })
 }
 const common = new Set('a an and are as at be been but by can did do for from had has have he her his how i in is it its me my of on or our she so that the their them there these they this to was we were what when which who will with would you your'.split(' '))
-const tokens = (text: string) => new Set((text.toLowerCase().match(/[\p{L}\p{N}]+/gu) ?? []).filter(w => !common.has(w)))
+const tokens = (text: string) => new Set((text.toLowerCase().match(/[\p{L}\p{N}\p{M}]+/gu) ?? []).filter(w => !common.has(w)))
 
 /** The source is quoted, never generated. Ties (including no overlap) keep the earliest sentence. */
 export function citationPassage(excerpt: string, answerSentence: string): { before: string; match: string; after: string } {
@@ -188,7 +188,7 @@ export function citationPassage(excerpt: string, answerSentence: string): { befo
   return { before: sentences[best - 1] ?? '', match: sentences[best] ?? '', after: sentences[best + 1] ?? '' }
 }
 
-const normalized = (text: string) => text.normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim()
+const normalized = (text: string) => text.normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}\p{M}]+/gu, ' ').trim()
 /** Locate an unchanged quote in a note block or transcript segment, tolerating Markdown and speaker prefixes. */
 export function citationTargetIndex(lines: string[], match: string, near = 0): number {
   const needle = normalized(match)
