@@ -212,6 +212,7 @@ export function guessLanguage(text: string, fallback: string): string {
   if (/[\p{Script=Hiragana}\p{Script=Katakana}]/u.test(text)) return 'Japanese'
   if (/\p{Script=Hangul}/u.test(text)) return 'Korean'
   if (/\p{Script=Han}/u.test(text)) return 'Chinese'
+  if (/\p{Script=Thai}/u.test(text)) return 'Thai'
   const said = text.toLowerCase().match(/[\p{L}]+/gu) ?? []
   const scores = Object.entries(COMMON).map(([lang, list]) => [lang, said.filter((w) => list.includes(w)).length] as const).sort((a, b) => b[1] - a[1])
   return scores[0][1] > 0 && scores[0][1] > scores[1][1] ? scores[0][0] : fallback

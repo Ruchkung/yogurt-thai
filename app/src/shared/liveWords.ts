@@ -60,7 +60,7 @@ export function replaceWords(cur: LiveWord[], incoming: LiveWord[], drop: (w: Li
   return [...cur.filter((w) => w.muteMs !== undefined || !drop(w)), ...incoming].sort((a, b) => a.startMs - b.startMs)
 }
 
-const norm = (s: string) => s.toLocaleLowerCase().replace(/[^\p{L}\p{N}']/gu, '')
+const norm = (s: string) => s.toLocaleLowerCase().replace(/[^\p{L}\p{N}\p{M}']/gu, '')
 const same = (a: string, b: string) => a === b || (Math.min(a.length, b.length) >= 4 && (a.startsWith(b) || b.startsWith(a)))
 /** a guessed time can be this far off before a rough word is taken to be before the final */
 const ROUGH_SLACK_MS = 500

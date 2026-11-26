@@ -790,5 +790,7 @@
   "Unmute my mic in Yogurt": "Yogurt’ta mikrofonumu aç",
   "Mic will stay off on resume": "Kayıt devam ettiğinde mikrofon kapalı kalacak",
   "Mic mute couldn’t be confirmed.": "Mikrofonun sessize alındığı doğrulanamadı.",
-  "Mic off. Yogurt can’t hear call audio.": "Mikrofon kapalı. Yogurt aramanın sesini alamıyor."
+  "Mic off. Yogurt can’t hear call audio.": "Mikrofon kapalı. Yogurt aramanın sesini alamıyor.",
+  "Thai": "Tayca",
+  "Best for meetings in Thai": "Tayca toplantılar için en iyisi"
 }
