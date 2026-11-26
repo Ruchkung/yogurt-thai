@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { asrEndpoint, cleanLocalServers, cleanServerUrl, llmBase, serverAnswers } from '../src/shared/localServers'
+import { asrEndpoint, cleanLocalServers, cleanServerUrl, llmBase, onThisComputer, serverAnswers } from '../src/shared/localServers'
 import { isServerModel, RoutedEngine, ServerEngine, serverModelPath } from '../src/main/serverEngine'
 import { createTranscriber } from '../src/main/asr/transcribe'
 import type { Engine } from '../src/main/engine'
@@ -52,6 +52,10 @@ describe('local server addresses', () => {
     expect(asrEndpoint('http://127.0.0.1:8178/v1/audio/transcriptions')).toEqual({ base: 'http://127.0.0.1:8178', path: '/v1/audio/transcriptions' })
     expect(llmBase('http://127.0.0.1:8081/v1')).toBe('http://127.0.0.1:8081')
   })
+  it('tells an address on this computer from another computer, where what Yogurt sends leaves this one', () => {
+    for (const u of ['http://127.0.0.1:8178', 'http://localhost:8081', 'http://[::1]:8081', 'http://yogurt.localhost']) expect(onThisComputer(u)).toBe(true)
+    for (const u of ['http://192.168.1.20:8081', 'https://api.example.test', 'http://127.0.0.1.example.test']) expect(onThisComputer(u)).toBe(false)
+  })
   it('says whether a server answers', async () => {
     const { f, calls } = fakeFetch({ '/': () => new Response('ok'), '/v1/models': () => json({ data: [] }) })
     expect(await serverAnswers('asr', 'http://127.0.0.1:8178/v1/audio/transcriptions', f)).toBe(true)
@@ -82,31 +86,74 @@ describe("the person's own whisper-server", () => {
 describe('the notes server', () => {
   const server = (routes: Record<string, (body: unknown) => Response>) => {
     const { f, calls } = fakeFetch(routes)
-    return { engine: new ServerEngine(() => 'http://127.0.0.1:8081', own(), f), calls }
+    const engine = new ServerEngine(own(), f, { propsMs: 1000, tokenizeMs: 50, answerMs: 50 })
+    return { engine, calls, ready: () => engine.load(serverModelPath('http://127.0.0.1:8081')).catch(() => undefined) }
   }
+  const path = serverModelPath('http://127.0.0.1:8081')
 
   it("takes its context from llama-server's /props", async () => {
-    expect(await server({ '/props': () => json({ default_generation_settings: { n_ctx: 65536 } }) }).engine.load()).toEqual({ contextSize: 65536 })
+    expect(await server({ '/props': () => json({ default_generation_settings: { n_ctx: 65536 } }) }).engine.load(path)).toEqual({ contextSize: 65536 })
     // not llama-server: the smallest guess
-    expect((await server({}).engine.load()).contextSize).toBe(4096)
+    expect((await server({}).engine.load(path)).contextSize).toBe(4096)
   })
 
   it('counts with /tokenize, and estimates when it has none', async () => {
-    expect(await server({ '/tokenize': (b) => json({ tokens: Array((b as { content: string }).content.length).fill(1) }) }).engine.count(['abc', 'สวัสดี'])).toEqual([3, 6])
-    expect(await server({}).engine.count(['abcdef'])).toEqual([2])
+    const s = server({ '/tokenize': (b) => json({ tokens: Array((b as { content: string }).content.length).fill(1) }) })
+    await s.ready()
+    expect(await s.engine.count(['abc', 'สวัสดี'])).toEqual([3, 6])
+    const none = server({}); await none.ready()
+    expect(await none.engine.count(['abcdef'])).toEqual([2])
+  })
+
+  it("doesn't wait on a tokenizer that stalls, and estimates from then on", async () => {
+    let asked = 0
+    const { f } = fakeFetch({})
+    const stalls = (async (url: string, init?: RequestInit) => {
+      if (!String(url).endsWith('/tokenize')) return f(url, init)
+      asked++
+      return new Promise<Response>((_, reject) => init?.signal?.addEventListener('abort', () => reject(init.signal!.reason)))
+    }) as typeof fetch
+    const engine = new ServerEngine(own(), stalls, { propsMs: 1000, tokenizeMs: 30, answerMs: 1000 })
+    await engine.load(path)
+    const t0 = Date.now()
+    expect(await engine.count(['abcdef', 'abc'])).toEqual([2, 1])
+    expect(Date.now() - t0).toBeLessThan(1000)
+    expect(await engine.count(['abcdef'])).toEqual([2])
+    expect(asked).toBe(2)
+  })
+
+  it('gives up on a server that never starts answering', async () => {
+    const hangs = (async (_url: string, init?: RequestInit) => new Promise<Response>((_, reject) => init?.signal?.addEventListener('abort', () => reject(init.signal!.reason)))) as typeof fetch
+    const engine = new ServerEngine(own(), hangs, { propsMs: 1000, tokenizeMs: 30, answerMs: 30 })
+    await expect(engine.at(path).chat({ messages: [] }, () => {})).rejects.toThrow("didn't answer within")
+  })
+
+  it('keeps a job on the server it started with when Settings change', async () => {
+    const a = fakeFetch({ '/props': () => json({ n_ctx: 8192 }), '/v1/chat/completions': () => sse([delta('from A')]) })
+    const engine = new ServerEngine(own(), (async (url: string, init?: RequestInit) => {
+      if (String(url).startsWith('http://b.localhost')) return sse([delta('from B')])
+      return a.f(url, init)
+    }) as typeof fetch)
+    await engine.load(path)
+    const job = engine.at(path)
+    // Settings now name another server, and something loads it
+    await engine.load(serverModelPath('http://b.localhost:8081')).catch(() => {})
+    expect(await job.chat({ messages: [] }, () => {})).toBe('from A')
   })
 
   it('streams the answer without thinking, and asks for none unless given a budget', async () => {
-    const { engine, calls } = server({ '/v1/chat/completions': () => sse([delta('<thi'), delta('nk>hmm</think>'), delta('สรุป: '), delta('ตกลงราคา'), '[DONE]']) })
+    const { engine, calls, ready } = server({ '/v1/chat/completions': () => sse([delta('<thi'), delta('nk>hmm</think>'), delta('สรุป: '), delta('ตกลงราคา'), '[DONE]']) })
+    await ready()
     const shown: string[] = []
     const answer = await engine.chat({ messages: [{ role: 'user', content: 'สรุปการประชุม' }], maxTokens: 500, temperature: 0.2 }, (t) => shown.push(t))
     expect(answer).toBe('สรุป: ตกลงราคา')
     expect(shown.join('')).toBe('สรุป: ตกลงราคา')
-    expect(calls[0].body).toMatchObject({ stream: true, max_tokens: 500, temperature: 0.2, chat_template_kwargs: { enable_thinking: false }, messages: [{ role: 'user', content: 'สรุปการประชุม' }] })
+    expect(calls.find((c) => c.url.endsWith('/v1/chat/completions'))?.body).toMatchObject({ stream: true, max_tokens: 500, temperature: 0.2, chat_template_kwargs: { enable_thinking: false }, messages: [{ role: 'user', content: 'สรุปการประชุม' }] })
   })
 
   it('says what the server answered when it fails', async () => {
-    const { engine } = server({ '/v1/chat/completions': () => new Response('model is loading', { status: 503 }) })
+    const { engine, ready } = server({ '/v1/chat/completions': () => new Response('model is loading', { status: 503 }) })
+    await ready()
     await expect(engine.chat({ messages: [{ role: 'user', content: 'x' }] }, () => {})).rejects.toThrow('The notes server answered 503: model is loading')
   })
 })
@@ -115,7 +162,7 @@ describe('choosing between Yogurt’s model and the notes server', () => {
   it('follows the model path, lets go of the own model when moving to the server, and keeps embeddings local', async () => {
     const local = own()
     const { f } = fakeFetch({ '/props': () => json({ n_ctx: 32768 }), '/v1/chat/completions': () => sse([delta('from server')]) })
-    const engine = new RoutedEngine(local, new ServerEngine(() => 'http://127.0.0.1:8081', local, f))
+    const engine = new RoutedEngine(local, new ServerEngine(local, f))
     await engine.load('/models/gemma.gguf', 8192, 4096)
     expect(await engine.chat({ messages: [] }, () => {})).toBe('own model')
     const path = serverModelPath('http://127.0.0.1:8081')
@@ -124,5 +171,6 @@ describe('choosing between Yogurt’s model and the notes server', () => {
     expect(local.unloads).toBe(1)
     expect(await engine.chat({ messages: [] }, () => {})).toBe('from server')
     expect(await engine.embed('/models/embed.gguf', ['a'])).toEqual([[1, 0]])
+    expect(await engine.forModel('/models/gemma.gguf').chat({ messages: [] }, () => {})).toBe('own model')
   })
 })

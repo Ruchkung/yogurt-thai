@@ -1,5 +1,5 @@
 /**
- * AI servers the person already runs (whisper.cpp's whisper-server, llama.cpp's llama-server), used instead of Yogurt's
+ * AI servers the person runs (whisper.cpp's whisper-server, llama.cpp's llama-server), on this computer or another, used instead of Yogurt's
  * own models when set in Settings. Each is one address; nothing goes anywhere until the person types one.
  */
 export type LocalServers = {
@@ -44,4 +44,11 @@ export const llmBase = (url: string): string => url.replace(/\/v1(\/chat\/comple
 export async function serverAnswers(kind: 'asr' | 'llm', url: string, fetchFn: typeof fetch = fetch): Promise<boolean> {
   const at = kind === 'asr' ? `${asrEndpoint(url).base}/` : `${llmBase(url)}/v1/models`
   try { return (await fetchFn(at, { signal: AbortSignal.timeout(5000) })).ok } catch { return false }
+}
+
+/** whether an address is this computer itself (localhost, 127.x.x.x, ::1): anything else is another machine, and what Yogurt sends there leaves this one */
+export function onThisComputer(url: string): boolean {
+  let host: string
+  try { host = new URL(url).hostname.toLowerCase() } catch { return false }
+  return host === 'localhost' || host.endsWith('.localhost') || /^127(\.\d{1,3}){3}$/.test(host) || host === '[::1]'
 }

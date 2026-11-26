@@ -811,8 +811,10 @@
   "A whisper-server address, with its path if it isn’t /inference.": "Διεύθυνση whisper-server, με τη διαδρομή αν δεν είναι /inference.",
   "An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.": "Διακομιστής συμβατός με OpenAI, όπως το llama-server. Γράφει περιλήψεις και απαντά σε ερωτήσεις.",
   "Couldn't reach this server. Yogurt will keep trying it.": "Δεν ήταν δυνατή η σύνδεση. Το Yogurt θα συνεχίσει να προσπαθεί.",
-  "Local servers": "Τοπικοί διακομιστές",
   "Notes server": "Διακομιστής σημειώσεων",
   "Speech server": "Διακομιστής ομιλίας",
-  "Use AI servers already running on this computer instead of Yogurt's own models. Leave a field blank to use Yogurt's.": "Χρήση διακομιστών AI που τρέχουν ήδη σε αυτόν τον υπολογιστή αντί για τα μοντέλα του Yogurt. Αφήστε ένα πεδίο κενό για τα μοντέλα του Yogurt."
+  "Your own AI servers": "Οι δικοί σας διακομιστές AI",
+  "Use AI servers you already run instead of Yogurt's own models. Yogurt sends meeting audio to the speech server, and transcripts and notes to the notes server. Leave a field blank to use Yogurt's.": "Χρήση διακομιστών AI που ήδη τρέχετε αντί για τα μοντέλα του Yogurt. Το Yogurt στέλνει τον ήχο της σύσκεψης στον διακομιστή ομιλίας και τις απομαγνητοφωνήσεις και σημειώσεις στον διακομιστή σημειώσεων. Αφήστε ένα πεδίο κενό για τα μοντέλα του Yogurt.",
+  "This address is another computer. Meeting audio will be sent to it.": "Αυτή η διεύθυνση είναι άλλος υπολογιστής. Ο ήχος της σύσκεψης θα σταλεί εκεί.",
+  "This address is another computer. Transcripts and notes will be sent to it.": "Αυτή η διεύθυνση είναι άλλος υπολογιστής. Οι απομαγνητοφωνήσεις και οι σημειώσεις θα σταλούν εκεί."
 }

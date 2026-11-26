@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 import { t } from '../../../shared/i18n'
-import type { LocalServers as Servers } from '../../../shared/localServers'
+import { cleanServerUrl, onThisComputer, type LocalServers as Servers } from '../../../shared/localServers'
 import { LoadingContent } from './LoadingContent'
 
 type Kind = 'asr' | 'llm'
 type Check = 'checking' | 'ok' | 'off' | undefined
 
 /**
- * Settings → Local servers: a whisper-server and an OpenAI-compatible chat server (llama-server) the person already runs,
+ * Settings → Your own AI servers: a whisper-server and an OpenAI-compatible chat server (llama-server) the person already runs,
  * used instead of Yogurt's own models. Saved when the field is left; blank goes back to Yogurt's model.
  */
 export function LocalServers() {
@@ -36,6 +36,7 @@ export function LocalServers() {
       <div className="settings-row-copy">
         <label htmlFor={`local-server-${kind}-input`} className="settings-label">{label}</label>
         <p className="settings-description">{description}</p>
+        {(() => { const url = cleanServerUrl(text[kind]); return url && !onThisComputer(url) && <p className="settings-description" role="alert" data-testid={`local-server-${kind}-remote`}>{kind === 'asr' ? t('This address is another computer. Meeting audio will be sent to it.') : t('This address is another computer. Transcripts and notes will be sent to it.')}</p> })()}
         {check[kind] && check[kind] !== 'checking' && <p className="settings-description" role="status">{check[kind] === 'ok' ? t('Connected') : t("Couldn't reach this server. Yogurt will keep trying it.")}</p>}
       </div>
       <input id={`local-server-${kind}-input`} data-testid={`local-server-${kind}-input`} value={text[kind]} placeholder={placeholder} autoComplete="off" spellCheck={false} dir="ltr"
@@ -45,9 +46,9 @@ export function LocalServers() {
   )
   return (
     <>
-      <h2 className="settings-section-heading">{t('Local servers')}</h2>
+      <h2 className="settings-section-heading">{t('Your own AI servers')}</h2>
       <LoadingContent pending={!saved}><div data-testid="settings-local-servers" className="settings-group">
-        <p className="settings-description settings-row">{t("Use AI servers already running on this computer instead of Yogurt's own models. Leave a field blank to use Yogurt's.")}</p>
+        <p className="settings-description settings-row">{t("Use AI servers you already run instead of Yogurt's own models. Yogurt sends meeting audio to the speech server, and transcripts and notes to the notes server. Leave a field blank to use Yogurt's.")}</p>
         {row('asr', t('Speech server'), t('A whisper-server address, with its path if it isn’t /inference.'), 'http://127.0.0.1:8178/v1/audio/transcriptions')}
         {row('llm', t('Notes server'), t('An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.'), 'http://127.0.0.1:8081')}
       </div></LoadingContent>

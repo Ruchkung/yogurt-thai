@@ -814,8 +814,10 @@
   "A whisper-server address, with its path if it isn’t /inference.": "whisper-serverin osoite, polun kanssa jos se ei ole /inference.",
   "An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.": "OpenAI-yhteensopiva palvelin, kuten llama-server. Se kirjoittaa yhteenvedot ja vastaa kysymyksiin.",
   "Couldn't reach this server. Yogurt will keep trying it.": "Palvelimeen ei saatu yhteyttä. Yogurt yrittää edelleen.",
-  "Local servers": "Paikalliset palvelimet",
   "Notes server": "Muistiinpanopalvelin",
   "Speech server": "Puhepalvelin",
-  "Use AI servers already running on this computer instead of Yogurt's own models. Leave a field blank to use Yogurt's.": "Käytä tällä tietokoneella jo toimivia tekoälypalvelimia Yogurtin omien mallien sijaan. Jätä kenttä tyhjäksi käyttääksesi Yogurtin mallia."
+  "Your own AI servers": "Omat tekoälypalvelimet",
+  "Use AI servers you already run instead of Yogurt's own models. Yogurt sends meeting audio to the speech server, and transcripts and notes to the notes server. Leave a field blank to use Yogurt's.": "Käytä jo ajamiasi tekoälypalvelimia Yogurtin omien mallien sijaan. Yogurt lähettää kokouksen äänen puhepalvelimelle ja litteroinnit ja muistiinpanot muistiinpanopalvelimelle. Jätä kenttä tyhjäksi käyttääksesi Yogurtin mallia.",
+  "This address is another computer. Meeting audio will be sent to it.": "Tämä osoite on toinen tietokone. Kokouksen ääni lähetetään sinne.",
+  "This address is another computer. Transcripts and notes will be sent to it.": "Tämä osoite on toinen tietokone. Litteroinnit ja muistiinpanot lähetetään sinne."
 }

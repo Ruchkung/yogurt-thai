@@ -864,8 +864,10 @@
   "A whisper-server address, with its path if it isn’t /inference.": "عنوان whisper-server، مع المسار إن لم يكن ‎/inference.",
   "An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.": "خادم متوافق مع OpenAI مثل llama-server. يكتب الملخصات ويجيب عن الأسئلة.",
   "Couldn't reach this server. Yogurt will keep trying it.": "تعذّر الوصول إلى هذا الخادم. سيواصل Yogurt المحاولة.",
-  "Local servers": "الخوادم المحلية",
   "Notes server": "خادم الملاحظات",
   "Speech server": "خادم الكلام",
-  "Use AI servers already running on this computer instead of Yogurt's own models. Leave a field blank to use Yogurt's.": "استخدم خوادم الذكاء الاصطناعي العاملة على هذا الكمبيوتر بدلًا من نماذج Yogurt. اترك الحقل فارغًا لاستخدام نماذج Yogurt."
+  "Your own AI servers": "خوادم الذكاء الاصطناعي الخاصة بك",
+  "Use AI servers you already run instead of Yogurt's own models. Yogurt sends meeting audio to the speech server, and transcripts and notes to the notes server. Leave a field blank to use Yogurt's.": "استخدم خوادم ذكاء اصطناعي تشغّلها بالفعل بدلًا من نماذج Yogurt. يرسل Yogurt صوت الاجتماع إلى خادم الكلام، والنصوص والملاحظات إلى خادم الملاحظات. اترك الحقل فارغًا لاستخدام نماذج Yogurt.",
+  "This address is another computer. Meeting audio will be sent to it.": "هذا العنوان لكمبيوتر آخر. سيُرسل إليه صوت الاجتماع.",
+  "This address is another computer. Transcripts and notes will be sent to it.": "هذا العنوان لكمبيوتر آخر. ستُرسل إليه النصوص والملاحظات."
 }

@@ -844,8 +844,10 @@
   "A whisper-server address, with its path if it isn’t /inference.": "Adres whisper-server, ze ścieżką, jeśli nie jest to /inference.",
   "An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.": "Serwer zgodny z OpenAI, np. llama-server. Pisze podsumowania i odpowiada na pytania.",
   "Couldn't reach this server. Yogurt will keep trying it.": "Nie można połączyć się z serwerem. Yogurt będzie próbować dalej.",
-  "Local servers": "Serwery lokalne",
   "Notes server": "Serwer notatek",
   "Speech server": "Serwer mowy",
-  "Use AI servers already running on this computer instead of Yogurt's own models. Leave a field blank to use Yogurt's.": "Używaj serwerów AI działających już na tym komputerze zamiast modeli Yogurt. Zostaw pole puste, aby użyć modelu Yogurt."
+  "Your own AI servers": "Własne serwery AI",
+  "Use AI servers you already run instead of Yogurt's own models. Yogurt sends meeting audio to the speech server, and transcripts and notes to the notes server. Leave a field blank to use Yogurt's.": "Używaj serwerów AI, które już uruchamiasz, zamiast modeli Yogurt. Yogurt wysyła dźwięk spotkania do serwera mowy, a transkrypcje i notatki do serwera notatek. Zostaw pole puste, aby użyć modelu Yogurt.",
+  "This address is another computer. Meeting audio will be sent to it.": "Ten adres to inny komputer. Dźwięk spotkania zostanie tam wysłany.",
+  "This address is another computer. Transcripts and notes will be sent to it.": "Ten adres to inny komputer. Transkrypcje i notatki zostaną tam wysłane."
 }

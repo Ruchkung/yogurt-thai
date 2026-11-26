@@ -796,8 +796,10 @@
   "A whisper-server address, with its path if it isn’t /inference.": "whisper-server का पता, path के साथ अगर वह /inference नहीं है।",
   "An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.": "llama-server जैसा OpenAI-संगत सर्वर। यह सारांश लिखता है और सवालों के जवाब देता है।",
   "Couldn't reach this server. Yogurt will keep trying it.": "इस सर्वर तक नहीं पहुँच सके। Yogurt कोशिश करता रहेगा।",
-  "Local servers": "लोकल सर्वर",
   "Notes server": "नोट्स सर्वर",
   "Speech server": "स्पीच सर्वर",
-  "Use AI servers already running on this computer instead of Yogurt's own models. Leave a field blank to use Yogurt's.": "Yogurt के अपने मॉडल की जगह इस कंप्यूटर पर पहले से चल रहे AI सर्वर इस्तेमाल करें। Yogurt का मॉडल इस्तेमाल करने के लिए फ़ील्ड खाली छोड़ें।"
+  "Your own AI servers": "आपके अपने AI सर्वर",
+  "Use AI servers you already run instead of Yogurt's own models. Yogurt sends meeting audio to the speech server, and transcripts and notes to the notes server. Leave a field blank to use Yogurt's.": "Yogurt के मॉडल की जगह वे AI सर्वर इस्तेमाल करें जो आप पहले से चलाते हैं। Yogurt मीटिंग का ऑडियो स्पीच सर्वर को, और ट्रांसक्रिप्ट व नोट्स नोट्स सर्वर को भेजता है। Yogurt का मॉडल इस्तेमाल करने के लिए फ़ील्ड खाली छोड़ें।",
+  "This address is another computer. Meeting audio will be sent to it.": "यह पता किसी दूसरे कंप्यूटर का है। मीटिंग का ऑडियो वहाँ भेजा जाएगा।",
+  "This address is another computer. Transcripts and notes will be sent to it.": "यह पता किसी दूसरे कंप्यूटर का है। ट्रांसक्रिप्ट और नोट्स वहाँ भेजे जाएँगे।"
 }

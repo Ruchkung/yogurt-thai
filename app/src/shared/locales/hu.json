@@ -796,8 +796,10 @@
   "A whisper-server address, with its path if it isn’t /inference.": "Egy whisper-server címe, az útvonallal, ha az nem /inference.",
   "An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.": "OpenAI-kompatibilis szerver, például llama-server. Összefoglalókat ír és kérdésekre válaszol.",
   "Couldn't reach this server. Yogurt will keep trying it.": "A szerver nem érhető el. A Yogurt tovább próbálkozik.",
-  "Local servers": "Helyi szerverek",
   "Notes server": "Jegyzetszerver",
   "Speech server": "Beszédszerver",
-  "Use AI servers already running on this computer instead of Yogurt's own models. Leave a field blank to use Yogurt's.": "A gépen már futó AI-szerverek használata a Yogurt saját modelljei helyett. Hagyd üresen a mezőt a Yogurt modelljéhez."
+  "Your own AI servers": "Saját AI-szerverek",
+  "Use AI servers you already run instead of Yogurt's own models. Yogurt sends meeting audio to the speech server, and transcripts and notes to the notes server. Leave a field blank to use Yogurt's.": "A már futtatott AI-szerverek használata a Yogurt saját modelljei helyett. A Yogurt a megbeszélés hangját a beszédszerverre, az átiratokat és jegyzeteket a jegyzetszerverre küldi. Hagyd üresen a mezőt a Yogurt modelljéhez.",
+  "This address is another computer. Meeting audio will be sent to it.": "Ez a cím egy másik számítógép. A megbeszélés hangja oda lesz küldve.",
+  "This address is another computer. Transcripts and notes will be sent to it.": "Ez a cím egy másik számítógép. Az átiratok és jegyzetek oda lesznek küldve."
 }

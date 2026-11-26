@@ -38,17 +38,32 @@ function withoutThinking(onToken: (t: string) => void) {
  * Embeddings stay with Yogurt's own engine (`local`), since the meaning index is built with its model.
  */
 export class ServerEngine implements Engine {
-  constructor(private url: () => string | undefined, private local: Engine, private fetchFn: typeof fetch = fetch) {}
+  /** the server the model was last "loaded" from: what plain count and chat calls go to */
+  private pinned: string | undefined
+  /** servers whose /tokenize failed or stalled: counted by estimate from then on, so no job waits on it again */
+  private noTokenize = new Set<string>()
+  constructor(private local: Engine, private fetchFn: typeof fetch = fetch, private limits = { propsMs: 10_000, tokenizeMs: 10_000, answerMs: 5 * 60_000 }) {}
 
-  private base() {
-    const u = this.url()
-    if (!u) throw new Error('No notes server set')
-    return llmBase(u)
+  /** the server a model path names (serverModelPath), never what Settings say now: a job stays on the server it started with */
+  private static urlOf(modelPath: string) {
+    if (!isServerModel(modelPath)) throw new Error('Not a notes server')
+    return llmBase(modelPath.slice(SERVER_MODEL.length))
+  }
+  private current() {
+    if (!this.pinned) throw new Error('No notes server loaded')
+    return this.pinned
   }
 
-  async load(): Promise<{ contextSize: number }> {
-    const base = this.base()
-    const res = await this.fetchFn(`${base}/props`, { signal: AbortSignal.timeout(10_000) }).catch((e: unknown) => {
+  /** count, chat and preload against the server this model path names, whatever is loaded later */
+  at(modelPath: string): Pick<Engine, 'count' | 'chat' | 'preload'> {
+    const base = ServerEngine.urlOf(modelPath)
+    return { count: (texts) => this.countAt(base, texts), chat: (req, onToken, signal) => this.chatAt(base, req, onToken, signal), preload: async () => 0 }
+  }
+
+  async load(modelPath: string): Promise<{ contextSize: number }> {
+    const base = ServerEngine.urlOf(modelPath)
+    this.pinned = base
+    const res = await this.fetchFn(`${base}/props`, { signal: AbortSignal.timeout(this.limits.propsMs) }).catch((e: unknown) => {
       throw new Error(`The notes server at ${base} can't be reached (${e instanceof Error ? e.message : String(e)})`)
     })
     // an OpenAI-compatible server that isn't llama-server has no /props: its context is unknown, so the smallest guess
@@ -60,19 +75,25 @@ export class ServerEngine implements Engine {
   }
   async unload() {}
 
-  async count(texts: string[]): Promise<number[]> {
-    const base = this.base()
+  count(texts: string[]) { return this.countAt(this.current(), texts) }
+  chat(req: ChatRequest, onToken: (text: string) => void, signal?: AbortSignal) { return this.chatAt(this.current(), req, onToken, signal) }
+
+  private async countAt(base: string, texts: string[]): Promise<number[]> {
+    // about 3 characters a token, a little over for English so a long meeting is split before it overflows
+    const estimate = (content: string) => Math.ceil(content.length / 3)
+    if (this.noTokenize.has(base)) return texts.map(estimate)
     return Promise.all(texts.map(async (content) => {
       try {
-        const res = await this.fetchFn(`${base}/tokenize`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ content }) })
+        const res = await this.fetchFn(`${base}/tokenize`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ content }), signal: AbortSignal.timeout(this.limits.tokenizeMs) })
         if (res.ok) { const r = (await res.json()) as { tokens?: unknown[] }; if (Array.isArray(r.tokens)) return r.tokens.length }
       } catch { /* estimated below */ }
-      // about 3 characters a token, a little over for English so a long meeting is split before it overflows
-      return Math.ceil(content.length / 3)
+      if (!this.noTokenize.has(base)) console.warn('NOTES', `the notes server at ${base} gave no token count: estimating from here on`)
+      this.noTokenize.add(base)
+      return estimate(content)
     }))
   }
 
-  async chat(req: ChatRequest, onToken: (text: string) => void, signal?: AbortSignal): Promise<string> {
+  private async chatAt(base: string, req: ChatRequest, onToken: (text: string) => void, signal?: AbortSignal): Promise<string> {
     if (signal?.aborted) throw new Error('Stopped')
     const think = (req.thoughtBudget ?? 0) > 0
     const body = {
@@ -83,7 +104,12 @@ export class ServerEngine implements Engine {
       chat_template_kwargs: { enable_thinking: think },
       ...(think ? { thinking_budget_tokens: req.thoughtBudget } : {}),
     }
-    const res = await this.fetchFn(`${this.base()}/v1/chat/completions`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), signal })
+    // a server that never starts answering would hold the queue: the answer's first bytes must come within answerMs
+    const started = new AbortController()
+    const timer = setTimeout(() => started.abort(new Error(`The notes server at ${base} didn't answer within ${Math.round(this.limits.answerMs / 1000)} s`)), this.limits.answerMs)
+    const res = await this.fetchFn(`${base}/v1/chat/completions`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), signal: signal ? AbortSignal.any([signal, started.signal]) : started.signal })
+      .catch((e: unknown) => { if (signal?.aborted) throw new Error('Stopped'); throw started.signal.aborted ? started.signal.reason : e })
+      .finally(() => clearTimeout(timer))
     if (!res.ok || !res.body) throw new Error(`The notes server answered ${res.status}${await res.text().then((t) => (t ? `: ${t.slice(0, 200)}` : ''), () => '')}`)
     const shown = withoutThinking(onToken)
     let answer = '', pending = ''
@@ -130,6 +156,10 @@ export class ServerEngine implements Engine {
 export class RoutedEngine implements Engine {
   private on: Engine
   constructor(private local: Engine, private server: ServerEngine) { this.on = local }
+  /** what a job uses: the engine its model path names, so a Settings change mid-job doesn't move it to another server */
+  forModel(modelPath: string): Pick<Engine, 'count' | 'chat' | 'preload'> {
+    return isServerModel(modelPath) ? this.server.at(modelPath) : this.local
+  }
   load(modelPath: string, contextSize: number, minContext: number) {
     const next = isServerModel(modelPath) ? this.server : this.local
     // leaving Yogurt's own model for the server: its memory goes back (the server's stays with the server)

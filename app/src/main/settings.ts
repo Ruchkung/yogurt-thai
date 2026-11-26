@@ -58,7 +58,7 @@ export type Settings = { theme?: 'light' | 'dark'; language?: string; /** what t
   jargon?: string[]
   /** the language people speak in meetings: English only unless 'th' or 'multi' (shared/spoken.ts) */
   spoken?: Spoken
-  /** AI servers already running on this computer, used instead of Yogurt's own models (shared/localServers.ts) */
+  /** AI servers the person runs (here or on another computer), used instead of Yogurt's own models (shared/localServers.ts) */
   localServers?: import('../shared/localServers').LocalServers
   /** the default for newly written summaries; the meeting's language when left out */
   summaryLanguage?: string

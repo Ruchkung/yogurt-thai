@@ -766,8 +766,10 @@
   "A whisper-server address, with its path if it isn’t /inference.": "whisper-server 位址；如果不是 /inference，請包含路徑。",
   "An OpenAI-compatible server such as llama-server. It writes summaries and answers Ask.": "相容 OpenAI 的伺服器，例如 llama-server。用來撰寫摘要和回答問題。",
   "Couldn't reach this server. Yogurt will keep trying it.": "無法連線到這台伺服器。Yogurt 會繼續嘗試。",
-  "Local servers": "本機伺服器",
   "Notes server": "筆記伺服器",
   "Speech server": "語音伺服器",
-  "Use AI servers already running on this computer instead of Yogurt's own models. Leave a field blank to use Yogurt's.": "使用這台電腦上已在執行的 AI 伺服器，而不是 Yogurt 內建的模型。留空則使用 Yogurt 的模型。"
+  "Your own AI servers": "你自己的 AI 伺服器",
+  "Use AI servers you already run instead of Yogurt's own models. Yogurt sends meeting audio to the speech server, and transcripts and notes to the notes server. Leave a field blank to use Yogurt's.": "使用你已在執行的 AI 伺服器，而不是 Yogurt 內建的模型。Yogurt 會把會議音訊傳送到語音伺服器，把逐字稿和筆記傳送到筆記伺服器。留空則使用 Yogurt 的模型。",
+  "This address is another computer. Meeting audio will be sent to it.": "此位址是另一台電腦。會議音訊將傳送到那裡。",
+  "This address is another computer. Transcripts and notes will be sent to it.": "此位址是另一台電腦。逐字稿和筆記將傳送到那裡。"
 }

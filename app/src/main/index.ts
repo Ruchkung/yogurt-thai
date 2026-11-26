@@ -741,9 +741,9 @@ app.whenReady().then(() => {
   // fake mode: the fixed Mac (a bigger one) unless a test asks for a 16 GB one
   const smallMac = isFake() ? process.env.YOGURT_FAKE_SMALL_MAC === '1' : isSmallMac(os.totalmem())
   const memory = notesMemory(smallMac)
-  // the person's own notes server (Settings → Local servers), when set, writes the notes instead of Yogurt's model
+  // the person's own notes server (Settings → Your own AI servers), when set, writes the notes instead of Yogurt's model
   const llmServer = () => cleanLocalServers(loadSettings(settingsFile).localServers).llm
-  const engine = new RoutedEngine(ownEngine, new ServerEngine(llmServer, ownEngine))
+  const engine = new RoutedEngine(ownEngine, new ServerEngine(ownEngine))
   const notesPath = () => { const url = llmServer(); return url ? serverModelPath(url) : setup.notesPath() }
   const model = createNotesModel({ engine, modelPath: notesPath, onLoaded: path => setup.notesModelLoaded(path), contextSize: memory.contextSize, ...(memory.releaseSpeech ? { beforeLoad: releaseIdleSpeech } : {}) })
   // first run: the notes model lands after recording already works; jobs wait in the queue for it

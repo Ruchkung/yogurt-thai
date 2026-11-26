@@ -15,7 +15,7 @@ import { basename } from 'node:path'
 import { createWhisperServer, recoverer, vadModelPath, whisperServerPath, type WhisperServer } from './server'
 import { clipStart, hearsClip } from './speedCheck'
 import { createTranscriber, type Line, type Transcribe } from './transcribe'
-import { asrEndpoint } from '../../shared/localServers'
+import { asrEndpoint, onThisComputer } from '../../shared/localServers'
 import { meetingWords, respell, whisperPrompt } from '../vocab'
 import type { TranscriptPartial } from '../../shared/types'
 import type { Chunk } from './chunker'
@@ -184,7 +184,7 @@ export function hookTranscription(p: {
   store: Pick<Store, 'addSegments' | 'updateMeeting'> & Partial<Pick<Store, 'segments' | 'hideSegments' | 'meeting' | 'deleteSegments'>>
   /** the speech model, once setup has it */
   modelPath: () => string | undefined
-  /** a whisper-server the person already runs (Settings → Local servers), used instead of Yogurt's own; read for each meeting */
+  /** a whisper-server the person already runs (Settings → Your own AI servers), used instead of Yogurt's own; read for each meeting */
   asrServer?: () => string | undefined
   /** smaller speech models already on disk, best first: one takes over when the processor is too slow for the model (#156) */
   smallerModels?: () => string[]
@@ -258,7 +258,7 @@ export function hookTranscription(p: {
     else if (p.asrServer?.()) {
       // the person's own whisper-server: it is up or it isn't, so nothing here starts, restarts or times it
       const { base, path } = asrEndpoint(p.asrServer()!)
-      console.info(`ASR using the whisper-server at ${base}${path}`)
+      console.info(`ASR using the whisper-server at ${base}${path}${onThisComputer(base) ? '' : ': another computer, so meeting audio leaves this one'}`)
       transcribe = createTranscriber({ url: async () => base, path, onLanguage: (_t, lang, chars, locked) => hear(lang, chars, locked), prompt: promptOf,
         language: () => options?.language ?? whisperLanguage(spokenNow()), signal: options?.signal })
     } else {
