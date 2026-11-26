@@ -70,19 +70,19 @@ export function SpokenMenu() {
       {presence.value && (
         <div data-testid="spoken-menu" {...presence.props} data-anchor="bottom-start" role="menu" aria-label={t('Spoken language')} onKeyDown={onKey}
           className="menu-entry absolute bottom-full start-0 z-30 mb-2 w-64 rounded-xl border border-line bg-float p-1.5 text-ink shadow-[var(--shadow)]">
-          <button role="menuitemradio" aria-checked={spoken === 'en'} data-testid="spoken-en" onClick={() => choose('en')} className={row}>
-            <span className="flex min-w-0 flex-col">
-              <span>{t('English only')}</span>
-              <span className="text-xs text-muted">{t('Highest quality')}</span>
-            </span>
-            {tick(spoken === 'en')}
-          </button>
           <button role="menuitemradio" aria-checked={spoken === 'th'} data-testid="spoken-th" onClick={() => choose('th')} className={row}>
             <span className="flex min-w-0 flex-col">
               <span>{t('Thai')}</span>
               <span className="text-xs text-muted">{t('Best for meetings in Thai')}</span>
             </span>
             {tick(spoken === 'th')}
+          </button>
+          <button role="menuitemradio" aria-checked={spoken === 'en'} data-testid="spoken-en" onClick={() => choose('en')} className={row}>
+            <span className="flex min-w-0 flex-col">
+              <span>{t('English only')}</span>
+              <span className="text-xs text-muted">{t('Highest quality')}</span>
+            </span>
+            {tick(spoken === 'en')}
           </button>
           <button role="menuitemradio" aria-checked={spoken === 'multi'} data-testid="spoken-multi" onClick={() => choose('multi')} className={row}>
             <span className="flex min-w-0 flex-col">
