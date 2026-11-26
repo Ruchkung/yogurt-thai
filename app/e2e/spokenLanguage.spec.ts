@@ -17,23 +17,25 @@ const fake = <T>(app: ElectronApplication, fn: string, arg?: unknown): Promise<T
 const languages = async (app: ElectronApplication) => (await fake<{ languages: string[] }>(app, 'prompts')).languages
 const saved = (userData: string) => JSON.parse(readFileSync(join(userData, 'settings.json'), 'utf8')).spoken
 
-test('the spoken language picker: English only by default, Multi-language for the recording going on, remembered and shown in Settings', async () => {
+test('the spoken language picker: Thai by default, Multi-language for the recording going on, remembered and shown in Settings', async () => {
   const a = await launch()
   const { app, page } = a
   try {
     await page.locator('#workspace-actions').getByRole('button', { name: 'Record', exact: true }).click()
     await expect(page.getByTestId('note-state')).toHaveAttribute('data-state', 'recording')
-    await expect(page.getByTestId('spoken-name')).toHaveText('English')
-    // whisper is told English, nothing is detected
+    await expect(page.getByTestId('spoken-name')).toHaveText('Thai')
+    // whisper is told Thai, nothing is detected
     await expect.poll(async () => (await languages(app)).length, { timeout: 30_000 }).toBeGreaterThan(0)
-    expect(new Set(await languages(app))).toEqual(new Set(['en']))
+    expect(new Set(await languages(app))).toEqual(new Set(['th']))
 
     await page.getByTestId('spoken-chip').click()
     const menu = page.getByTestId('spoken-menu')
     await expect(menu).toBeVisible()
     await expect(page.getByTestId('spoken-en')).toContainText('English only')
     await expect(page.getByTestId('spoken-en')).toContainText('Highest quality')
-    await expect(page.getByTestId('spoken-en')).toHaveAttribute('aria-checked', 'true')
+    await expect(page.getByTestId('spoken-th')).toContainText('Thai')
+    await expect(page.getByTestId('spoken-th')).toHaveAttribute('aria-checked', 'true')
+    await expect(page.getByTestId('spoken-en')).toHaveAttribute('aria-checked', 'false')
     await expect(page.getByTestId('spoken-multi')).toContainText('Multi-language')
     await expect(page.getByTestId('spoken-multi')).toContainText('99 languages supported')
     await expect(page.getByTestId('spoken-multi-info')).toHaveAttribute('title', /not in English/)
@@ -61,9 +63,13 @@ test('the spoken language picker: English only by default, Multi-language for th
     await expect(page.getByTestId('settings-spoken-multi')).toHaveAttribute('aria-checked', 'true')
     await page.getByTestId('settings-spoken-en').click()
     await expect(page.getByTestId('settings-spoken-en')).toHaveAttribute('aria-checked', 'true')
-    // English only is the default, so it is not written down
+    await expect.poll(() => saved(a.userData)).toBe('en')
+    await page.getByTestId('settings-spoken-th').click()
+    await expect(page.getByTestId('settings-spoken-th')).toHaveAttribute('aria-checked', 'true')
+    // Thai is the default, so it is not written down
     await expect.poll(() => saved(a.userData)).toBeUndefined()
-    await page.getByTestId('settings-spoken-en').press('ArrowRight')
+    // Thai is first, so going back from it wraps round to Multi-language
+    await page.getByTestId('settings-spoken-th').press('ArrowLeft')
     await expect(page.getByTestId('settings-spoken-multi')).toHaveAttribute('aria-checked', 'true')
     await expect.poll(focused).toBe('settings-spoken-multi')
     await expect.poll(() => saved(a.userData)).toBe('multi')

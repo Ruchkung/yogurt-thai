@@ -6,15 +6,16 @@ import { spokenOf, whisperLanguage } from '../src/shared/spoken'
 import { loadSettings, spokenSetting, updateSettings } from '../src/main/settings'
 
 describe('the spoken language setting', () => {
-  it('is English only unless Multi-language was picked', () => {
-    expect(spokenOf(undefined)).toBe('en')
+  it('is Thai unless English only or Multi-language was picked', () => {
+    expect(spokenOf(undefined)).toBe('th')
     expect(spokenOf('en')).toBe('en')
     expect(spokenOf('multi')).toBe('multi')
-    expect(spokenOf('klingon')).toBe('en')
-    expect(spokenSetting({})).toBe('en')
+    expect(spokenOf('klingon')).toBe('th')
+    expect(spokenSetting({})).toBe('th')
+    expect(spokenSetting({ spoken: 'en' })).toBe('en')
     expect(spokenSetting({ spoken: 'multi' })).toBe('multi')
   })
-  it('English only is the default, so only Multi-language is written down', () => {
+  it('a picked language is written down, and nothing once it is the default again', () => {
     const file = join(mkdtempSync(join(tmpdir(), 'yogurt-spoken-')), 'settings.json')
     updateSettings(file, { spoken: 'multi' })
     expect(loadSettings(file).spoken).toBe('multi')
